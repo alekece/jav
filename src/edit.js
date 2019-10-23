@@ -6,6 +6,7 @@ const widget = require('./widget');
 
 exports.edit = function (screen, jira, ticketId) {
     let projects = [];
+    let issue = null;
     let projectId = null;
     let issueTypeId = null;
 
@@ -16,7 +17,7 @@ exports.edit = function (screen, jira, ticketId) {
 	keys: true,
 	left: 0,
 	top: 0,
-	label: "Create JIRA"
+	label: `Edit JIRA: ${ticketId}`
     });
 
     const list = grid.set(0, 10, 10, 2, blessed.list, {
@@ -163,7 +164,7 @@ exports.edit = function (screen, jira, ticketId) {
 
     form.on("submit", async () => {
 	if (projectInput.getValue() && typeInput.getValue() && summaryInput.getValue() && descriptionInput.getValue()) {
-	    const issue = await jira.addNewIssue({
+	    const issue = await jira.updateIssue(ticketId, {
 		fields: {
 		    project: {
 			id: projectId
@@ -190,8 +191,7 @@ exports.edit = function (screen, jira, ticketId) {
 
     const helper = grid.set(10, 0, 2, 12, widget.helper, {
 	shortcuts: [
-            { key: 'C-j', desc: 'Create JIRA', callback: () => form.submit() },
-	    { key: 'C-l', desc: 'Reset', callback: () => form.reset() }
+            { key: 'C-e', desc: 'Edit JIRA', callback: () => form.submit() }
 	],
 	shortcutByColumn: 4
     })
@@ -200,6 +200,11 @@ exports.edit = function (screen, jira, ticketId) {
 
     (async () => {
 	projects = await jira.listProjects();
+	issue = await jira.getIssue(ticketId);
+	projectInput.setValue(issue.fields.project.key);
+	typeInput.setValue(issue.fields.issuetype.name);
+	summaryInput.setValue(issue.summary);
+	descriptionInput.setValue(issue.description);
 	screen.render();
     })();    
 };
