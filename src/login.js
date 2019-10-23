@@ -15,11 +15,11 @@ function login(screen) {
     }
 
     var grid = new contrib.grid({ rows: 12, cols: 12, screen: screen })
-    var form = grid.set(0, 0, 12, 12, blessed.form, {
+    var form = grid.set(0, 0, 10, 12, blessed.form, {
         keys: true,
         vi: false,
         parent: screen,
-        content: 'Authenticate'
+        label: 'Authentication'
     })
     var emailLabel = blessed.text({
         parent: form,
