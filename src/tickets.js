@@ -36,32 +36,6 @@ function formatData(dataz) {
     return rows
 }
 
-function bindTopBox(screen) {
-
-}
-
-function bindColumnSortingKeys(screen, context) {
-    keyBindings.forEach(
-        function (keyB) {
-            screen.key(keyB[0], function (ch, key) {
-                var attribute = keyB[1]
-                keyB[2] = !keyB[2]
-                context.rows.sort(function (r1, r2) {
-                    return r1[attribute].localeCompare(r2[attribute]) * (keyB[2] ? 1 : -1)
-                })
-                context.table.setData(
-                    {
-                        headers: header,
-                        data: context.rows.map(row => {
-                            return Object.values(row)
-                        })
-                    })
-                screen.render()
-            });
-        })
-}
-
-
 function formatDate(stringDate) {
     return new Date(stringDate).toLocaleDateString("en-US",
         { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' })
@@ -108,7 +82,6 @@ function renderTableView(screen, jira) {
         , columnWidth: context.columnWidth
     }))
 
-    // bindColumnSortingKeys(screen, context)
     context.table.focus()
     // allow control the table with the keyboard
     context.table.setData(
@@ -187,14 +160,6 @@ function renderTableView(screen, jira) {
         }
     })
 
-
-    shortcts.push({
-        'key': "a",
-        'desc': "Custom List",
-        'callback': function () {
-
-        }
-    })
     var help = grid.set(10, 0, 2, 12, widget.helper, styles.helper(
         {
             parent: screen,
