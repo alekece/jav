@@ -3,6 +3,7 @@ const contrib = require('blessed-contrib')
 const colors = require('colors/safe')
 const styles = require('./styles')
 const widget = require('./widget')
+const {edit} = require('./edit.js')
 
 // Here are common variable (They can actually be passed through function, keep them here for readability)
 
@@ -169,6 +170,11 @@ function renderTableView(screen, jira) {
     screen.key('escape', function (ch, key) {
         context.filter = (s) => true
         renderTableView(screen, jira)
+    })
+    screen.key('enter', function (ch, key) {
+        screen.remove(context.table)
+        screen.remove(help)
+        edit(screen, jira, context.rows[context.table.rows.selected].key)
     })
     help.applyKeysTo(screen)
     screen.render()
