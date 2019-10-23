@@ -4,8 +4,8 @@ const JiraApi = require('jira-client');
 const jira = new JiraApi({
   protocol: 'https',
   host: 'ledgerhq.atlassian.net',
-  username: 'julien.rouzieres@ledger.fr',
-  password: 'YrfbaMEFAGvDMxEcQNN87F6F',
+  username: '',
+  password: '',
   apiVersion: '2',
   strictSSL: true
 });
