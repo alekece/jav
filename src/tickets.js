@@ -66,6 +66,15 @@ function formatDate(stringDate) {
         { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' })
 }
 
+function refreshData(screen, context) {
+    context.table.setData(
+        {
+            headers: header,
+            data: context.rows.filter((v) => context.filter(v)).map(o => Object.values(o))
+
+        })
+    screen.render()
+}
 
 function renderTableView(screen, jira) {
     const context = {
@@ -80,13 +89,7 @@ function renderTableView(screen, jira) {
     // Fetch Data
     fetchJiraTickets(jira).then(function (dataz) {
         context.rows = formatData(dataz)
-        context.table.setData(
-            {
-                headers: header,
-                data: context.rows.filter((v) => context.filter(v)).map(o => Object.values(o))
-
-            })
-        screen.render()
+        refreshData(screen, context)
     })
 
     // Create empty component
@@ -158,7 +161,7 @@ function renderTableView(screen, jira) {
             prompt.readInput('Search', '', (err, value) => {
                 if (value) {
                     context.filter = (s) => JSON.stringify(s).includes(value)
-                    renderTableView(screen, jira)
+                    refreshData(screen, context)
                 }
             })
         }
@@ -168,7 +171,7 @@ function renderTableView(screen, jira) {
         desc: 'Clear search',
         callback: () => {
             context.filter = (s) => true
-            renderTableView(screen, jira)
+            refreshData(screen, context)
         }
     })
     shortcts.push({
