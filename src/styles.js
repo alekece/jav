@@ -1,4 +1,5 @@
 const foregroundColor = '#ecf0f1'
+const backgroundColor = 'black'
 const highlightBackgroundColor = '#2a2c20'
 const borderType = 'line'
 
@@ -12,7 +13,8 @@ function input(options) {
 
 function label(options) {
     options.style = {
-        fg: foregroundColor
+        fg: foregroundColor,
+        bg: backgroundColor
     }
 
     return options
@@ -20,6 +22,7 @@ function label(options) {
 
 function form(options) {
     options.style = {
+        bg: backgroundColor,
         border: {
             type: borderType
         }
@@ -32,6 +35,7 @@ function table(options) {
     options.fg = foregroundColor
     options.selectedFg = foregroundColor
     options.selectedBg = highlightBackgroundColor
+    options.bg = backgroundColor
 
     return options
 }
@@ -43,6 +47,7 @@ function button(options) {
 function helper(options) {
     options.style = {
         fg: foregroundColor,
+        bg: backgroundColor,
         border: {
             type: borderType
         }
