@@ -36,32 +36,6 @@ function formatData(dataz) {
     return rows
 }
 
-function bindTopBox(screen) {
-
-}
-
-function bindColumnSortingKeys(screen, context) {
-    keyBindings.forEach(
-        function (keyB) {
-            screen.key(keyB[0], function (ch, key) {
-                var attribute = keyB[1]
-                keyB[2] = !keyB[2]
-                context.rows.sort(function (r1, r2) {
-                    return r1[attribute].localeCompare(r2[attribute]) * (keyB[2] ? 1 : -1)
-                })
-                context.table.setData(
-                    {
-                        headers: header,
-                        data: context.rows.map(row => {
-                            return Object.values(row)
-                        })
-                    })
-                screen.render()
-            });
-        })
-}
-
-
 function formatDate(stringDate) {
     return new Date(stringDate).toLocaleDateString("en-US",
         { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' })
@@ -96,7 +70,7 @@ function renderTableView(screen, jira) {
     // Create empty component
     var grid = new contrib.grid({ rows: 12, cols: 12, screen: screen })
 
-    context.table = grid.set(0, 0, 10, 12, contrib.table, styles.table({
+    context.table = grid.set(2, 0, 8, 12, contrib.table, styles.table({
         keys: true
         , parent: screen
         , interactive: true
@@ -108,7 +82,6 @@ function renderTableView(screen, jira) {
         , columnWidth: context.columnWidth
     }))
 
-    // bindColumnSortingKeys(screen, context)
     context.table.focus()
     // allow control the table with the keyboard
     context.table.setData(
@@ -126,15 +99,11 @@ function renderTableView(screen, jira) {
                 {
                     headers: header,
                     data: context.rows.map(row => {
-                        /*if (row) {
-                             var arr = Object.values(row)
-                             arr.forEach(
-                                 function (value, index) {
-                                     console.log("Value is type of : " + typeof value)
-                                 }
-                             )
-                         } */
-                        return Object.values(row)
+                        var tab = Object.values(row);
+                        tab.forEach(function (part, index, theArray) {
+                            tab[index] = part.substring(0, part.substring(0, 4));
+                        });
+                        return tab
                     })
                 })
 
@@ -190,7 +159,6 @@ function renderTableView(screen, jira) {
             create(screen, jira)
         }
     })
-
 
     var help = grid.set(10, 0, 2, 12, widget.helper, styles.helper(
         {
