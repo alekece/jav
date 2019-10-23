@@ -4,8 +4,8 @@ const JiraApi = require('jira-client');
 const jira = new JiraApi({
   protocol: 'https',
   host: 'ledgerhq.atlassian.net',
-  username: '',
-  password: '',
+  username: 'julien.rouzieres@ledger.fr',
+  password: 'CbyQjvuyVQLWE8nuYguT11A9',
   apiVersion: '2',
   strictSSL: true
 });
@@ -13,7 +13,7 @@ const jira = new JiraApi({
 
 async function displayJira() {
     const issue = await jira.findIssue('BACK-304');
-    console.log(JSON.stringify(issue, null, 4));
+    return issue;
 }
 
 async function searchJira() {
@@ -42,7 +42,11 @@ async function createJira() {
     }
 }
 
-//displayJira();
+(async () => {
+    const issue = await displayJira();
+    console.log(issue);
+})();
+
 //searchJira();
 //createJira();
 
