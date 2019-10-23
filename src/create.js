@@ -1,4 +1,5 @@
 const JiraApi = require("jira-client");
+const styles = require("./styles");
 
 const jira = new JiraApi({
     protocol: "https",
@@ -22,10 +23,20 @@ const form = blessed.form({
     keys: true,
     left: 0,
     top: 0,
-    width: "100%",
+    width: "80%",
     height: "100%",
     content: "Create JIRA",
     align: "center"
+});
+
+const list = blessed.list({
+    parent: screen,
+    mouse: true,
+    keys: true,
+    left: "81%",
+    top: 0,
+    width: "100%",
+    height: "100%"
 });
 
 const projectLabel = blessed.text({
@@ -36,24 +47,15 @@ const projectLabel = blessed.text({
     content: "Project:"
 });
 
-const projectInput = blessed.textbox({
+const projectInput = blessed.textbox(styles.input({
     parent: form,
     mouse: true,
     inputOnFocus: true,
     left: 15,
     top: 2,
     height: 1,
-    name: "projectInput",
-    style: {
-	bg: "blue",
-	focus: {
-	    bg: "red"
-	},
-	hover: {
-	    bg: "red"
-	}
-    }
-});
+    name: "projectInput"
+}));
 
 const typeLabel = blessed.text({
     parent: form,
@@ -63,24 +65,15 @@ const typeLabel = blessed.text({
     content: "Type:"
 });
 
-const typeInput = blessed.textbox({
+const typeInput = blessed.textbox(styles.input({
     parent: form,
     mouse: true,
     inputOnFocus: true,
     left: 15,
     top: 4,
     height: 1,
-    name: "typeInput",
-    style: {
-	bg: "blue",
-	focus: {
-	    bg: "red"
-	},
-	hover: {
-	    bg: "red"
-	}
-    }
-});
+    name: "typeInput"
+}));
 
 const summaryLabel = blessed.text({
     parent: form,
@@ -90,24 +83,15 @@ const summaryLabel = blessed.text({
     content: "Summary:"
 });
 
-const summaryInput = blessed.textbox({
+const summaryInput = blessed.textbox(styles.input({
     parent: form,
     mouse: true,
     inputOnFocus: true,
     left: 15,
     top: 6,
     height: 1,
-    name: "summaryInput",
-    style: {
-	bg: "blue",
-	focus: {
-	    bg: "red"
-	},
-	hover: {
-	    bg: "red"
-	}
-    }
-});
+    name: "summaryInput"
+}));
 
 const descriptionLabel = blessed.text({
     parent: form,
@@ -117,61 +101,39 @@ const descriptionLabel = blessed.text({
     content: "Description:"
 });
 
-const descriptionInput = blessed.textarea({
+const descriptionInput = blessed.textarea(styles.input({
     parent: form,
     mouse: true,
     keys: true,
     left: 15,
     top: 8,
     bottom: 4,
-    name: "descriptionInput",
-    style: {
-	bg: "blue",
-	focus: {
-	    bg: "red"
-	},
-	hover: {
-	    bg: "red"
-	}
-    }
-});
+    name: "descriptionInput"
+}));
 
-const cancel = blessed.button({
+const cancel = blessed.button(styles.button({
     parent: form,
     mouse: true,
     right: 20,
     bottom: 2,
     shrink: true,
     name: "cancel",
-    content: "Cancel",
-    style: {
-	bg: "blue",
-	focus: {
-	    bg: "red"
-	},
-	hover: {
-	    bg: "red"
-	}
-    }
-});
+    content: "Cancel"
+}));
 
-const submit = blessed.button({
+const submit = blessed.button(styles.button({
     parent: form,
     mouse: true,
     right: 10,
     bottom: 2,
     shrink: true,
     name: "submit",
-    content: "Ok",
-    style: {
-	bg: "blue",
-	focus: {
-	    bg: "red"
-	},
-	hover: {
-	    bg: "red"
-	}
-    }
+    content: "Ok"
+}));
+
+projectInput.on("focus", () => {
+    list.setItems(projects.map(project => project.key));
+    screen.render();
 });
 
 projectInput.on("blur", () => {
@@ -184,20 +146,31 @@ projectInput.on("blur", () => {
 	projectId = filtered[0].id;
     }
 
+    list.setItems([]);
+    screen.render();
+});
+
+typeInput.on("focus", async () => {
+    if (projectInput.getValue()) {
+	const projectKey = projects.filter(project => project.key === projectInput.getValue())[0].key;
+	const project = await jira.getProject(projectKey);
+
+	const value = typeInput.getValue();
+	list.setItems(project.issueTypes.filter(issueType => !issueType.subtask).map(issueType => issueType.name));
+    } else {
+	list.setItems([]);
+    }
+
     screen.render();
 });
 
 typeInput.on("blur", async () => {
     if (projectInput.getValue()) {
-	const projectKey = projects.filter(
-	    project => project.key === projectInput.getValue()
-	)[0].key;
+	const projectKey = projects.filter(project => project.key === projectInput.getValue())[0].key;
 	const project = await jira.getProject(projectKey);
 
 	const value = typeInput.getValue();
-	const filtered = project.issueTypes.filter(
-	    issueTypes => !issueTypes.subtask && issueTypes.name === value
-	);
+	const filtered = project.issueTypes.filter(issueType => !issueType.subtask && issueType.name === value);
 
 	if (filtered.length === 0) {
 	    typeInput.clearValue();
@@ -208,6 +181,7 @@ typeInput.on("blur", async () => {
 	typeInput.clearValue();
     }
 
+    list.setItems([]);
     screen.render();
 });
 
@@ -220,12 +194,7 @@ cancel.on("press", () => {
 });
 
 form.on("submit", async () => {
-    if (
-	projectInput.getValue() &&
-	    typeInput.getValue() &&
-	    summaryInput.getValue() &&
-	    descriptionInput.getValue()
-    ) {
+    if (projectInput.getValue() && typeInput.getValue() && summaryInput.getValue() && descriptionInput.getValue()) {
 	const issue = await jira.addNewIssue({
 	    fields: {
 		project: {
@@ -239,13 +208,11 @@ form.on("submit", async () => {
 	    }
 	});
 
-	form.setContent("" + issue.id)
 	screen.render();
     }
 });
 
 form.on("reset", data => {
-    form.setContent("Canceled.");
     screen.render();
 });
 
