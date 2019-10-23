@@ -1,14 +1,14 @@
 const JiraApi = require('jira-client');
-const auth = require('./auth.js')
-const table = require('./table.js')
+const auth = require('./src/auth.js')
+const table = require('./src/tableView.js')
 
 const token = auth.retrieveToken()
 
 const jira = new JiraApi({
   protocol: 'https',
   host: 'ledgerhq.atlassian.net',
-  username: 'julien.rouzieres@ledger.fr',
-  password: 'CbyQjvuyVQLWE8nuYguT11A9',
+  username: '',
+  password: token,
   apiVersion: '2',
   strictSSL: true
 });
