@@ -37,6 +37,13 @@ function label(options) {
     return options
 }
 
+function table(options) {
+    options.fg = 'white'
+    options.selectedFg = 'white'
+    options.selectedBg = 'blue'
+    return options
+}
+
 function helper(options) {
     options.style = {
         fg: foregroundColor,
@@ -54,5 +61,6 @@ module.exports = {
     input: input,
     helper: helper,
     label: label,
-    button: button
+    button: button,
+    table: table
 }
