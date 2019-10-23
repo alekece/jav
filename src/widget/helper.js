@@ -2,7 +2,7 @@ var blessed = require("blessed"),
     styles = require("../styles")
 
 function helper(options) {
-    options.content = 'Help'
+    options.label = ' Help '
     options.tag = true
     options.border = { type: 'line' }
 
@@ -11,24 +11,23 @@ function helper(options) {
     var index = 0
 
     options.shortcuts.forEach(function(shortcut) {
-        var leftOffset = Math.floor(index / options.shortcutByColumn) * 10
-        var topOffset = index % options.shortcutByColumn + 2
+        var leftOffset = Math.floor(index / options.shortcutByColumn) * 10 + 1
+        var topOffset = index % options.shortcutByColumn + 1
+        var keys = shortcut.key instanceof Array ? shortcut.key.join(', ') : shortcut.key
 
         console.log(index)
 
-        blessed.text(styles.label({
+        blessed.text(styles.input({
             parent: box,
             left: leftOffset,
             top: topOffset,
-            name: shortcut.key,
-            content: shortcut.key,
+            content: keys,
         }))
 
         blessed.text(styles.label({
             parent: box,
-            left: leftOffset + shortcut.key.length + 1,
+            left: leftOffset + keys.length + 1,
             top: topOffset,
-            name: shortcut.desc,
             content: shortcut.desc,
         }))
 
