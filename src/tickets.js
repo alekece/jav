@@ -79,8 +79,6 @@ function renderTableView(screen, jira) {
         keys: true
         , parent: box
         , interactive: true
-        , width: '95%'
-        , height: '95%'
         , left: 1
         , top: 1
         , columnSpacing: 5 //in chars
