@@ -2,11 +2,13 @@ const blessed = require('blessed'),
     JiraApi = require('jira-client'),
     contrib = require('blessed-contrib'),
     styles = require('./styles'),
+    widget = require('./widget'),
     fs = require('fs')
 
 function login(screen) {
     const auth = fs.readFileSync('./auth', 'utf8')
     console.log(auth)
+
     const grid = new contrib.grid({ rows: 12, cols: 12, screen: screen })
     const form = grid.set(0, 0, 12, 12, blessed.form, {
         keys: true,
@@ -92,27 +94,6 @@ function login(screen) {
         style: styles.button()
     });
 
-    const cancel = blessed.button({
-        parent: form,
-        shrink: true,
-        padding: {
-            left: 1,
-            right: 1
-        },
-        left: 20,
-        top: 10,
-        name: 'quit',
-        content: 'quit',
-        style: styles.button()
-    });
-
-    login.on('press', function () {
-        form.submit();
-    });
-    cancel.on('press', function () {
-        form.cancel();
-    });
-
     form.on('submit', data => {
         try {
             const jira = new JiraApi({
@@ -132,6 +113,15 @@ function login(screen) {
     form.on('cancel', () => {
         process.exit(0)
     })
+    var helper = grid.set(10, 0, 2, 12, widget.helper, { 
+        shortcuts: [
+            { key: 'C-q', desc: 'Authenticate', callback: () => form.submit() },
+            { key: 'C-r', desc: 'Reset', callback: () => form.reset() }
+        ],
+        shortcutByColumn: 4 
+    })
+
+    helper.applyKeysTo(form)
 
     screen.render()
 }
