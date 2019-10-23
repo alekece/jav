@@ -4,6 +4,7 @@ const colors = require('colors/safe')
 const styles = require('./styles')
 const widget = require('./widget')
 const {edit} = require('./edit.js')
+const {create} = require('./create.js')
 
 // Here are common variable (They can actually be passed through function, keep them here for readability)
 
@@ -29,44 +30,26 @@ function formatData(dataz) {
             status: issues[ticket]["fields"]["status"]["name"],
             component: issues[ticket]["fields"]["components"][0] ? issues[ticket]["fields"]["components"][0]["name"] : "None",
             summary: issues[ticket]["fields"]["summary"]
-
         }
         rows.push(row)
     }
     return rows
 }
 
-function bindTopBox(screen) {
-
-}
-
-function bindColumnSortingKeys(screen, context) {
-    keyBindings.forEach(
-        function (keyB) {
-            screen.key(keyB[0], function (ch, key) {
-                var attribute = keyB[1]
-                keyB[2] = !keyB[2]
-                context.rows.sort(function (r1, r2) {
-                    return r1[attribute].localeCompare(r2[attribute]) * (keyB[2] ? 1 : -1)
-                })
-                context.table.setData(
-                    {
-                        headers: header,
-                        data: context.rows.map(row => {
-                            return Object.values(row)
-                        })
-                    })
-                screen.render()
-            });
-        })
-}
-
-
 function formatDate(stringDate) {
     return new Date(stringDate).toLocaleDateString("en-US",
         { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' })
 }
 
+function refreshData(screen, context) {
+    context.table.setData(
+        {
+            headers: header,
+            data: context.rows.filter((v) => context.filter(v)).map(o => Object.values(o))
+
+        })
+    screen.render()
+}
 
 function renderTableView(screen, jira) {
     const context = {
@@ -81,19 +64,13 @@ function renderTableView(screen, jira) {
     // Fetch Data
     fetchJiraTickets(jira).then(function (dataz) {
         context.rows = formatData(dataz)
-        context.table.setData(
-            {
-                headers: header,
-                data: context.rows.filter((v) => context.filter(v)).map(o => Object.values(o))
-
-            })
-        screen.render()
+        refreshData(screen, context)
     })
 
     // Create empty component
     var grid = new contrib.grid({ rows: 12, cols: 12, screen: screen })
 
-    var box = grid.set(0, 0, 10, 12, blessed.box, styles.box({
+    var box = grid.set(2, 0, 8, 12, blessed.box, styles.box({
         parent: screen,
         label: ' Issues navigation'
     })) 
@@ -110,7 +87,6 @@ function renderTableView(screen, jira) {
         , columnWidth: context.columnWidth
     }))
 
-    // bindColumnSortingKeys(screen, context)
     context.table.focus()
     // allow control the table with the keyboard
     context.table.setData(
@@ -128,15 +104,11 @@ function renderTableView(screen, jira) {
                 {
                     headers: header,
                     data: context.rows.map(row => {
-                        /*if (row) {
-                             var arr = Object.values(row)
-                             arr.forEach(
-                                 function (value, index) {
-                                     console.log("Value is type of : " + typeof value)
-                                 }
-                             )
-                         } */
-                        return Object.values(row)
+                        var tab = Object.values(row);
+                        tab.forEach(function (part, index, theArray) {
+                            tab[index] = part.substring(0, part.substring(0, 4));
+                        });
+                        return tab
                     })
                 })
 
@@ -152,6 +124,46 @@ function renderTableView(screen, jira) {
         }
         shortcts.push(short)
     })
+    shortcts.push({
+        key: '/',
+        desc: 'Search table',
+        callback: () => {
+            var prompt = blessed.prompt({
+                parent: screen,
+                left: 'center',
+                top: 'center'
+            })
+            prompt.readInput('Search', '', (err, value) => {
+                if (value) {
+                    context.filter = (s) => JSON.stringify(s).includes(value)
+                    refreshData(screen, context)
+                }
+            })
+        }
+    })
+    shortcts.push({
+        key: 'C-d',
+        desc: 'Clear search',
+        callback: () => {
+            context.filter = (s) => true
+            refreshData(screen, context)
+        }
+    })
+    shortcts.push({
+        key: 'enter',
+        desc: 'Edit selected ticket',
+        callback: () => {
+            screen.realloc()
+            edit(screen, jira, context.rows[context.table.rows.selected].key)
+        }
+    })
+
+    shortcts.push({
+        key: 'C-c', desc: 'Create JIRA', callback: () => {
+            screen.realloc()
+            create(screen, jira)
+        }
+    })
 
     var help = grid.set(10, 0, 2, 12, widget.helper, styles.helper(
         {
@@ -159,28 +171,6 @@ function renderTableView(screen, jira) {
             shortcutByColumn: 4,
             shortcuts: shortcts
         }))
-    screen.key('/', function (ch, key) {
-        var prompt = blessed.prompt({
-            parent: screen,
-            left: 'center',
-            top: 'center'
-        })
-        prompt.readInput('Search', '', (err, value) => {
-            if (value) {
-                context.filter = (s) => JSON.stringify(s).includes(value)
-                renderTableView(screen, jira)
-            }
-        })
-    })
-    screen.key('escape', function (ch, key) {
-        context.filter = (s) => true
-        renderTableView(screen, jira)
-    })
-    screen.key('enter', function (ch, key) {
-        screen.remove(context.table)
-        screen.remove(help)
-        edit(screen, jira, context.rows[context.table.rows.selected].key)
-    })
     help.applyKeysTo(screen)
     screen.render()
 }
