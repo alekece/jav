@@ -42,11 +42,23 @@ async function createJira() {
     }
 }
 
-(async () => {
-    const issue = await displayJira();
-    console.log(issue);
-})();
+async function searchProject() {
+    const projects = await jira.listProjects();
+    return projects;
+}
 
-//searchJira();
-//createJira();
+async function searchTypes() {
+    const issueTypes = await jira.listIssueTypes();
+    return issueTypes;
+}
+
+async function getProject() {
+    const p = await jira.getProject('VD');
+    return p;
+}
+
+(async () => {
+    const o = await getProject();
+    console.log(JSON.stringify(o));
+})();
 
