@@ -58,6 +58,6 @@ async function getProject() {
 }
 
 (async () => {
-    const o = await jira.getIssue('INFRA-1292');
+    const o = await jira.getIssue('LV-1824');
     console.log(JSON.stringify(o));
 })();

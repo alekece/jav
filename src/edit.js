@@ -216,11 +216,13 @@ exports.edit = function (screen, jira, ticketId) {
         projects = await jira.listProjects();
         issue = await jira.getIssue(ticketId);
         projectInput.setValue(issue.fields.project.key);
+        projectId = issue.fields.project.id;
         typeInput.setValue(issue.fields.issuetype.name);
-        summaryInput.setValue(issue.summary);
-        descriptionInput.setValue(issue.description);
+        issueTypeId = issue.fields.issuetype.id;
+        summaryInput.setValue(issue.fields.summary);
+        descriptionInput.setValue(issue.fields.description);
         screen.render();
         form.focus();
-    })();
+    })();    
 };
 
