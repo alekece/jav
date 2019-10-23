@@ -1,12 +1,12 @@
-const blessed = require('blessed'),
+var blessed = require('blessed'),
     JiraApi = require('jira-client'),
     contrib = require('blessed-contrib'),
     styles = require('./styles'),
     widget = require('./widget'),
+    tickets = require('./tickets.js')
     fs = require('fs')
 
 function login(screen) {
-    
     var auth = []
     try{
         auth = fs.readFileSync('./.login', 'utf8').split('\n')
@@ -14,76 +14,90 @@ function login(screen) {
     catch(error) {
     }
 
-    const grid = new contrib.grid({ rows: 12, cols: 12, screen: screen })
-    const form = grid.set(0, 0, 12, 12, blessed.form, {
+    var grid = new contrib.grid({ rows: 12, cols: 12, screen: screen })
+    var form = grid.set(0, 0, 12, 12, blessed.form, {
         keys: true,
-        vi: true,
+        vi: false,
         parent: screen,
         content: 'Authenticate'
     })
-    const emailLabel = blessed.text({
+    var emailLabel = blessed.text({
         parent: form,
         left: 2,
         top: 2,
         name: 'emailLabel',
         content: 'Email:'
     });
-    const tokenLabel = blessed.text({
+    var tokenLabel = blessed.text({
         parent: form,
         left: 2,
         top: 5,
         name: 'tokenLabel',
         content: 'Token:'
     });
-    const urlLabel = blessed.text({
+    var urlLabel = blessed.text({
         parent: form,
         left: 2,
         top: 8,
         name: 'jiraUrlLabel',
         content: 'JIRA URL:'
     })
-    const rememberMeLabel = blessed.text({
+    var rememberMeLabel = blessed.text({
         parent: form,
         left: 2,
         top: 11,
         name: 'rememberMe',
         content: 'Remember me:'
     })
-    const email = blessed.textbox(styles.input({
+    var email = blessed.textbox(styles.input({
         parent: form,
+        inputOnFocus: true,
         left: 2,
         top: 3,
         height: 1,
         name: 'email',
         value: auth[0]
     }));
-    const token = blessed.textbox(styles.input({
+    var token = blessed.textbox(styles.input({
         parent: form,
         censor: true,
+        inputOnFocus: true,
         left: 2,
         top: 6,
         height: 1,
         name: 'token',
         value: auth[1],
     }));
-    const jiraUrl = blessed.textbox(styles.input({
+    var jiraUrl = blessed.textbox(styles.input({
         parent: form,
+        inputOnFocus: true,
         left: 2,
         top: 9,
         height: 1,
         name: 'jiraUrl',
         value: auth[2],
     }));
-    const rememberMe = blessed.checkbox({
+    var rememberMe = blessed.checkbox({
         parent: form,
+        inputOnFocus: true,
         left: 2,
         top: 12,
         height: 1,
         name: 'rememberMe'
     })
 
+    var helper = grid.set(10, 0, 2, 12, widget.helper, {
+        shortcuts: [
+            { key: 'C-l', desc: 'Login', callback: () => form.submit() }
+        ],
+        shortcutByColumn: 4,
+        parent: screen
+    })
+
+    helper.applyKeysTo(form)
+
     form.on('submit', data => {
-        const jira = new JiraApi({
+        var jira = new JiraApi({
             protocol: 'https',
             host: data.jiraUrl,
             username: data.email,
@@ -94,18 +108,10 @@ function login(screen) {
         if(data.rememberMe){
             fs.writeFileSync('./.login', data.email + '\n' + data.token + '\n' + data.jiraUrl)
         }
-        screen.clear()
-        screen.render()
+        screen.remove(helper)
+        screen.remove(form)
+        tickets.renderTableView(screen, jira)
     })
-
-    var helper = grid.set(10, 0, 2, 12, widget.helper, {
-        shortcuts: [
-            { key: 'C-l', desc: 'Login', callback: () => form.submit() }
-        ],
-        shortcutByColumn: 4
-    })
-
-    helper.applyKeysTo(form)
 
     screen.render()
 }

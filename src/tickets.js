@@ -2,8 +2,6 @@ const blessed = require('blessed')
 const contrib = require('blessed-contrib')
 const colors = require('colors/safe')
 const styles = require('./styles')
-// Export rendering function only
-module.exports.renderTableView = renderTableView
 
 // Here are common variable (They can actually be passed through function, keep them here for readability)
 const header = [colors.cyan('Issue (i)'), colors.red('Type (t)'), 'Creator (c)', 'Creation Date (d)', 'Project (p)', colors.magenta('Status (s)'), 'Component (o)']
@@ -24,7 +22,7 @@ function renderTable(screen, context) {
             headers: header,
             data: context.rows.map(o => Object.values(o))
         })
-    screen.render()
+        screen.render()
 }
 
 async function fetchJiraTickets(jira) {
@@ -32,16 +30,12 @@ async function fetchJiraTickets(jira) {
     return issues;
 }
 
-async function createTable(dataz) {
-    var screen = blessed.screen()
-    screen.key(['escape', 'q', 'C-c'], function (ch, key) {
-        return process.exit(0);
-    });
-    
+function createTable(screen, dataz) {
     context.rows = formatData(dataz)
     var grid = new contrib.grid({ rows: 12, cols: 12, screen: screen })
     context.table = grid.set(0, 0, 10, 12, contrib.table, styles.table({
         keys: true
+        , parent: screen
         , interactive: true
         , label: 'Issues Navigator'
         , width: '80%'
@@ -100,11 +94,16 @@ function bindColumnSortingKeys(screen, context) {
 }
 
 function refreshTable(context){}
-async function renderTableView(jira) {
-    fetchJiraTickets(jira).then(data => createTable(data)).catch(console.log);
+function renderTableView(screen, jira) {
+    jira.searchJira('assignee in (currentUser())').then(data => {
+        createTable(screen, data)
+    }).catch(console.log);
 }
 
 function formatDate(stringDate) {
     return new Date(stringDate).toLocaleDateString("en-US",
         { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' })
 }
+
+// Export rendering function only
+module.exports.renderTableView = renderTableView
