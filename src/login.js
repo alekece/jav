@@ -1,16 +1,22 @@
-const blessed = require('blessed'),
+var blessed = require('blessed'),
     JiraApi = require('jira-client'),
     contrib = require('blessed-contrib'),
     styles = require('./styles'),
     widget = require('./widget'),
+    tickets = require('./tickets.js')
     fs = require('fs')
 
 
 function login(screen) {
-    const auth = fs.readFileSync('./auth', 'utf8').split('\n')
+    var auth = []
+    try{
+        auth = fs.readFileSync('./.login', 'utf8').split('\n')
+    }
+    catch(error) {
+    }
 
-    const grid = new contrib.grid({ rows: 12, cols: 12, screen: screen })
-    const form = grid.set(0, 0, 10, 12, blessed.form, styles.form({
+    var grid = new contrib.grid({ rows: 12, cols: 12, screen: screen })
+    var form = grid.set(0, 0, 10, 12, blessed.form, styles.form({
         keys: true,
         vi: false,
         parent: screen,
@@ -23,35 +29,35 @@ function login(screen) {
         cols: 110,
         onReady: () => screen.render()
     })
-    const emailLabel = blessed.text({
+    var emailLabel = blessed.text({
         parent: form,
         left: 2,
         top: 15,
         name: 'emailLabel',
         content: 'Email:'
     });
-    const tokenLabel = blessed.text({
+    var tokenLabel = blessed.text({
         parent: form,
         left: 2,
         top: 18,
         name: 'tokenLabel',
         content: 'Token:'
     });
-    const urlLabel = blessed.text({
+    var urlLabel = blessed.text({
         parent: form,
         left: 2,
         top: 21,
         name: 'jiraUrlLabel',
         content: 'JIRA URL:'
     })
-    const rememberMeLabel = blessed.text({
+    var rememberMeLabel = blessed.text({
         parent: form,
         left: 2,
         top: 24,
         name: 'rememberMe',
         content: 'Remember me:'
     })
-    const email = blessed.textbox(styles.input({
+    var email = blessed.textbox(styles.input({
         parent: form,
         inputOnFocus: true,
         left: 2,
@@ -61,9 +67,9 @@ function login(screen) {
         name: 'email',
         value: auth[0]
     }));
-    const token = blessed.textbox(styles.input({
+    var token = blessed.textbox(styles.input({
         parent: form,
-        secret: true,
+        censor: true,
         inputOnFocus: true,
         left: 2,
         top: 19,
@@ -72,7 +78,7 @@ function login(screen) {
         name: 'token',
         value: auth[1],
     }));
-    const jiraUrl = blessed.textbox(styles.input({
+    var jiraUrl = blessed.textbox(styles.input({
         parent: form,
         inputOnFocus: true,
         left: 2,
@@ -82,7 +88,7 @@ function login(screen) {
         name: 'jiraUrl',
         value: auth[2],
     }));
-    const rememberMe = blessed.checkbox({
+    var rememberMe = blessed.checkbox({
         parent: form,
         inputOnFocus: true,
         left: 2,
@@ -92,8 +98,18 @@ function login(screen) {
         name: 'rememberMe'
     })
 
+    var helper = grid.set(10, 0, 2, 12, widget.helper, {
+        shortcuts: [
+            { key: 'C-l', desc: 'Login', callback: () => form.submit() }
+        ],
+        shortcutByColumn: 4,
+        parent: screen
+    })
+
+    helper.applyKeysTo(form)
+
     form.on('submit', data => {
-        const jira = new JiraApi({
+        var jira = new JiraApi({
             protocol: 'https',
             host: data.jiraUrl,
             username: data.email,
@@ -101,17 +117,13 @@ function login(screen) {
             apiVersion: '2',
             strictSSL: true
         });
-        fs.writeFileSync('./auth', data.email + '\n' + data.token + '\n' + data.token)
+        if(data.rememberMe){
+            fs.writeFileSync('./.login', data.email + '\n' + data.token + '\n' + data.jiraUrl)
+        }
+        screen.remove(helper)
+        screen.remove(form)
+        tickets.renderTableView(screen, jira)
     })
-
-    var helper = grid.set(10, 0, 2, 12, widget.helper, {
-        shortcuts: [
-            { key: ['C-l', 'l'], desc: 'Login', callback: () => form.submit() }
-        ],
-        shortcutByColumn: 4
-    })
-
-    helper.applyKeysTo(form)
 
     screen.render()
 }

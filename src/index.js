@@ -1,9 +1,12 @@
 var blessed = require('blessed')
-    , screen = blessed.screen()
     , { login } = require('./login')
 
-login(screen)
+function main() {
+    var screen = blessed.screen()
+    screen.key(['q', 'C-c'], function () {
+        return process.exit(0);
+    });
+    login(screen)
+}
 
-screen.key(['escape', 'q', 'C-c'], function() {
-    return process.exit(0);
-});
+main()
