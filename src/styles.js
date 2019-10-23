@@ -16,8 +16,8 @@ function input(options) {
     return options
 }
 
-function button() {
-    return {
+function button(options) {
+    options.style = {
         bg: 'blue',
         focus: {
             bg: 'red'
@@ -26,6 +26,8 @@ function button() {
             bg: 'red'
         }
     }
+
+    return options
 }
 
 function label(options) {
