@@ -1,6 +1,6 @@
 # Jira Avocado
 
-A sweet Terminal Interface to make your liofe easier
+A sweet Terminal Interface to make your life easier
 
 ## Environment 
 
