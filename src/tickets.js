@@ -11,6 +11,7 @@ const keyBindings = [['i', 'key', false], ['t', 'type', false], ['c', 'creator',
 const context = {
     rows : [],
     table : {},
+    filter: (s) => true,
     jql : ""
 }
 /**
@@ -20,7 +21,7 @@ function renderTable(screen, context) {
     context.table.setData(
         {
             headers: header,
-            data: context.rows.map(o => Object.values(o))
+            data: context.rows.filter((v) => context.filter(v)).map(o => Object.values(o))
         })
         screen.render()
 }
@@ -44,6 +45,23 @@ function createTable(screen, dataz) {
         , columnSpacing: 10 //in chars
         , columnWidth: [10, 8, 20, 40, 20, 15, 20]
     }))
+    screen.key('/', function(ch, key) {
+        var prompt = blessed.prompt({
+            parent: screen,
+            left: 'center',
+            top: 'center'
+        })
+        prompt.readInput('Search', '', (err, value) => {
+            if(value) {
+                context.filter = (s) => JSON.stringify(s).includes(value)
+                renderTable(screen, context)
+            }
+        })
+    })
+    screen.key('escape', function(ch, key) {
+        context.filter = (s) => true
+        renderTable(screen, context)
+    })
 
     bindColumnSortingKeys(screen, context)
 
