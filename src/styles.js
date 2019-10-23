@@ -10,4 +10,17 @@ function input() {
     }
 }
 
+function button() {
+    return {
+        bg: 'blue',
+        focus: {
+            bg: 'red'
+        },
+        hover: {
+            bg: 'red'
+        }
+    }
+}
+
 exports.input = input
+exports.button = button
