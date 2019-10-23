@@ -8,14 +8,17 @@ function helper(options) {
 
     var box = blessed.box(styles.helper(options))
 
+    function stringifyKey(key) {
+        return key instanceof Array ? key.join(', ') : key
+    }
+
     var index = 0
+    var maxLength = Math.max.apply(null, options.shortcuts.map(x => stringifyKey(x.key).length + x.desc.length + 1))
 
     options.shortcuts.forEach(function(shortcut) {
-        var leftOffset = Math.floor(index / options.shortcutByColumn) * 10 + 1
+        var leftOffset = Math.floor(index / options.shortcutByColumn) * maxLength + 1
         var topOffset = index % options.shortcutByColumn + 1
-        var keys = shortcut.key instanceof Array ? shortcut.key.join(', ') : shortcut.key
-
-        console.log(index)
+        var keys = stringifyKey(shortcut.key)
 
         blessed.text(styles.input({
             parent: box,
