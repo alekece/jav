@@ -4,6 +4,7 @@ const colors = require('colors/safe')
 const styles = require('./styles')
 const widget = require('./widget')
 const {edit} = require('./edit.js')
+const {create} = require('./create.js')
 
 // Here are common variable (They can actually be passed through function, keep them here for readability)
 
@@ -178,11 +179,18 @@ function renderTableView(screen, jira) {
         key: 'enter',
         desc: 'Edit selected ticket',
         callback: () => {
-            screen.remove(context.table)
-            screen.remove(help)
+            screen.realloc()
             edit(screen, jira, context.rows[context.table.rows.selected].key)
         }
     })
+
+    shortcts.push({
+        key: 'C-c', desc: 'Create JIRA', callback: () => {
+            screen.realloc()
+            create(screen, jira)
+        }
+    })
+
 
     var help = grid.set(10, 0, 2, 12, widget.helper, styles.helper(
         {

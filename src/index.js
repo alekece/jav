@@ -3,7 +3,7 @@ var blessed = require('blessed')
 
 function main() {
     var screen = blessed.screen()
-    screen.key(['q', 'C-c'], function () {
+    screen.key(['q'], function () {
         return process.exit(0);
     });
     login(screen)
