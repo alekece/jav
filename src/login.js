@@ -6,12 +6,18 @@ const blessed = require('blessed'),
     fs = require('fs')
 
 function login(screen) {
-    const auth = fs.readFileSync('./auth', 'utf8').split('\n')
+    
+    var auth = []
+    try{
+        auth = fs.readFileSync('./.login', 'utf8').split('\n')
+    }
+    catch(error) {
+    }
 
     const grid = new contrib.grid({ rows: 12, cols: 12, screen: screen })
     const form = grid.set(0, 0, 12, 12, blessed.form, {
         keys: true,
-        vi: false,
+        vi: true,
         parent: screen,
         content: 'Authenticate'
     })
@@ -45,7 +51,6 @@ function login(screen) {
     })
     const email = blessed.textbox(styles.input({
         parent: form,
-        inputOnFocus: true,
         left: 2,
         top: 3,
         height: 1,
@@ -54,8 +59,7 @@ function login(screen) {
     }));
     const token = blessed.textbox(styles.input({
         parent: form,
-        secret: true,
-        inputOnFocus: true,
+        censor: true,
         left: 2,
         top: 6,
         height: 1,
@@ -64,7 +68,6 @@ function login(screen) {
     }));
     const jiraUrl = blessed.textbox(styles.input({
         parent: form,
-        inputOnFocus: true,
         left: 2,
         top: 9,
         height: 1,
@@ -73,7 +76,6 @@ function login(screen) {
     }));
     const rememberMe = blessed.checkbox({
         parent: form,
-        inputOnFocus: true,
         left: 2,
         top: 12,
         height: 1,
@@ -89,7 +91,11 @@ function login(screen) {
             apiVersion: '2',
             strictSSL: true
         });
-        fs.writeFileSync('./auth', data.email + '\n' + data.token + '\n' + data.token)
+        if(data.rememberMe){
+            fs.writeFileSync('./.login', data.email + '\n' + data.token + '\n' + data.jiraUrl)
+        }
+        screen.clear()
+        screen.render()
     })
 
     var helper = grid.set(10, 0, 2, 12, widget.helper, {
