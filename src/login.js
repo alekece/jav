@@ -1,14 +1,10 @@
 var blessed = require('blessed'),
     contrib = require('blessed-contrib'),
-    styles = require('./styles')
+    styles = require('./styles'),
+    widget = require('./widget')
 
-function login(screen) {
-    var grid = new contrib.grid({rows: 12, cols: 12, screen: screen})
-    var form = grid.set(0, 0, 12, 12, blessed.form, {
-        parent: screen,
-        content: 'Authenticate'
-    })    
-    var emailLabel = blessed.text({
+function createForm(screen, grid) {
+    blessed.text({
         parent: form,
         mouse: true,
         left: 2,
@@ -16,7 +12,8 @@ function login(screen) {
         name: 'emailLabel',
         content: 'Email:'
     });
-    var tokenLabel = blessed.text({
+    
+    blessed.text({
         parent: form,
         mouse: true,
         left: 2,
@@ -24,6 +21,7 @@ function login(screen) {
         name: 'tokenLabel',
         content: 'Token:'
     });
+    
     var email = blessed.textbox({
         parent: form,
         mouse: true,
@@ -36,7 +34,8 @@ function login(screen) {
         name: 'email',
         style: styles.input()
     });
-    var token =  blessed.textbox({
+    
+    var token = blessed.textbox({
         parent: form,
         mouse: true,
         keys: true,
@@ -48,6 +47,35 @@ function login(screen) {
         name: 'token',
         style: styles.input()
     });
+
+    form.on('submit', function() {
+        form.setContent('Submitted.');
+        screen.render();
+    });
+    
+    form.on('reset', function() {
+        form.setContent('Canceled.');
+        screen.render();
+    });
+
+    return form
+}
+
+function login(screen) {
+    var grid = new contrib.grid({rows: 12, cols: 12, screen: screen})
+    var form = grid.set(0, 0, 10, 12, blessed.form, {
+        parent: screen,
+        content: 'Authenticate'
+    })
+    var helper = grid.set(10, 0, 2, 12, widget.helper, { 
+        shortcuts: [
+            { key: 'C-q', desc: 'Authenticate', callback: () => form.submit() },
+            { key: 'C-r', desc: 'Reset', callback: () => form.reset() }
+        ],
+        shortcutByColumn: 4 
+    })
+
+    helper.applyKeysTo(form)
 
     screen.render()
 }
