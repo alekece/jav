@@ -5,9 +5,8 @@ function helper(options) {
     options.content = 'Help'
     options.tag = true
     options.border = { type: 'line' }
-    options.style = styles.helper()
 
-    var box = blessed.box(options)
+    var box = blessed.box(styles.helper(options))
 
     var index = 0
 
@@ -17,23 +16,21 @@ function helper(options) {
 
         console.log(index)
 
-        blessed.text({
+        blessed.text(styles.label({
             parent: box,
             left: leftOffset,
             top: topOffset,
             name: shortcut.key,
             content: shortcut.key,
-            style: styles.label()
-        })
+        }))
 
-        blessed.text({
+        blessed.text(styles.label({
             parent: box,
             left: leftOffset + shortcut.key.length + 1,
             top: topOffset,
             name: shortcut.desc,
             content: shortcut.desc,
-            style: styles.label()
-        })
+        }))
 
         index += 1
     })

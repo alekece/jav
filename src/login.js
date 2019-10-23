@@ -43,17 +43,16 @@ function login(screen) {
         name: 'rememberMe',
         content: 'Remember me:'
     })
-    const email = blessed.textbox({
+    const email = blessed.textbox(styles.input({
         parent: form,
         inputOnFocus: true,
         left: 2,
         top: 3,
         height: 1,
         name: 'email',
-        value: auth[0],
-        style: styles.input()
-    });
-    const token = blessed.textbox({
+        value: auth[0]
+    }));
+    const token = blessed.textbox(styles.input({
         parent: form,
         secret: true,
         inputOnFocus: true,
@@ -62,9 +61,8 @@ function login(screen) {
         height: 1,
         name: 'token',
         value: auth[1],
-        style: styles.input()
-    });
-    const jiraUrl = blessed.textbox({
+    }));
+    const jiraUrl = blessed.textbox(styles.input({
         parent: form,
         inputOnFocus: true,
         left: 2,
@@ -72,8 +70,7 @@ function login(screen) {
         height: 1,
         name: 'jiraUrl',
         value: auth[2],
-        style: styles.input()
-    });
+    }));
     const rememberMe = blessed.checkbox({
         parent: form,
         inputOnFocus: true,
