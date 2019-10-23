@@ -107,7 +107,8 @@ function login(screen) {
         left: 2,
         top: 34,
         height: 1,
-        name: 'rememberMe'
+        name: 'rememberMe',
+        checked: auth.length == 3
     }))
 
     var helper = grid.set(10, 0, 2, 12, widget.helper, {
