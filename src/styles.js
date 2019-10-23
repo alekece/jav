@@ -2,8 +2,8 @@ const foregroundColor = '#ecf0f1'
 const backgroundColor = '#2c3e50'
 const inputBackgroundColor = '#34495e'
 
-function input() {
-    return {
+function input(options) {
+    options.style = {
         bg: inputBackgroundColor,
         focus: {
             bg: 'red'
@@ -12,6 +12,8 @@ function input() {
             bg: 'red'
         }
     }
+
+    return options
 }
 
 function button() {
@@ -26,21 +28,26 @@ function button() {
     }
 }
 
-function label() {
-    return {
+function label(options) {
+    options.style = {
         bg: backgroundColor,
         fg: foregroundColor
     }
+
+    return options
 }
 
-function helper() {
-    return {
+function helper(options) {
+    options.style = {
         fg: foregroundColor,
         bg: backgroundColor,
         border: {
-            bg: backgroundColor
+            bg: backgroundColor,
+            type: 'line'
         }
     }
+
+    return options
 }
 
 module.exports = {
