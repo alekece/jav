@@ -1,5 +1,8 @@
 const JiraApi = require('jira-client');
+const auth = require('./auth.js')
+const table = require('./table.js')
 
+const token = auth.retrieveToken()
 
 const jira = new JiraApi({
   protocol: 'https',
@@ -62,3 +65,4 @@ async function getProject() {
     console.log(JSON.stringify(o));
 })();
 
+table.renderTableView(jira)
