@@ -4,7 +4,7 @@ const contrib = require('blessed-contrib');
 const styles = require("./styles");
 const widget = require('./widget');
 
-exports.login = function (screen, jira) {
+exports.create = function (screen, jira) {
     let projects = [];
     let projectId = null;
     let issueTypeId = null;
