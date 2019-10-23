@@ -29,7 +29,6 @@ function formatData(dataz) {
             status: issues[ticket]["fields"]["status"]["name"],
             component: issues[ticket]["fields"]["components"][0] ? issues[ticket]["fields"]["components"][0]["name"] : "None",
             summary: issues[ticket]["fields"]["summary"]
-
         }
         rows.push(row)
     }
@@ -67,6 +66,15 @@ function formatDate(stringDate) {
         { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' })
 }
 
+function refreshData(screen, context) {
+    context.table.setData(
+        {
+            headers: header,
+            data: context.rows.filter((v) => context.filter(v)).map(o => Object.values(o))
+
+        })
+    screen.render()
+}
 
 function renderTableView(screen, jira) {
     const context = {
@@ -81,13 +89,7 @@ function renderTableView(screen, jira) {
     // Fetch Data
     fetchJiraTickets(jira).then(function (dataz) {
         context.rows = formatData(dataz)
-        context.table.setData(
-            {
-                headers: header,
-                data: context.rows.filter((v) => context.filter(v)).map(o => Object.values(o))
-
-            })
-        screen.render()
+        refreshData(screen, context)
     })
 
     // Create empty component
@@ -147,6 +149,40 @@ function renderTableView(screen, jira) {
         }
         shortcts.push(short)
     })
+    shortcts.push({
+        key: '/',
+        desc: 'Search table',
+        callback: () => {
+            var prompt = blessed.prompt({
+                parent: screen,
+                left: 'center',
+                top: 'center'
+            })
+            prompt.readInput('Search', '', (err, value) => {
+                if (value) {
+                    context.filter = (s) => JSON.stringify(s).includes(value)
+                    refreshData(screen, context)
+                }
+            })
+        }
+    })
+    shortcts.push({
+        key: 'C-d',
+        desc: 'Clear search',
+        callback: () => {
+            context.filter = (s) => true
+            refreshData(screen, context)
+        }
+    })
+    shortcts.push({
+        key: 'enter',
+        desc: 'Edit selected ticket',
+        callback: () => {
+            screen.remove(context.table)
+            screen.remove(help)
+            edit(screen, jira, context.rows[context.table.rows.selected].key)
+        }
+    })
 
     var help = grid.set(10, 0, 2, 12, widget.helper, styles.helper(
         {
@@ -154,28 +190,6 @@ function renderTableView(screen, jira) {
             shortcutByColumn: 4,
             shortcuts: shortcts
         }))
-    screen.key('/', function (ch, key) {
-        var prompt = blessed.prompt({
-            parent: screen,
-            left: 'center',
-            top: 'center'
-        })
-        prompt.readInput('Search', '', (err, value) => {
-            if (value) {
-                context.filter = (s) => JSON.stringify(s).includes(value)
-                renderTableView(screen, jira)
-            }
-        })
-    })
-    screen.key('escape', function (ch, key) {
-        context.filter = (s) => true
-        renderTableView(screen, jira)
-    })
-    screen.key('enter', function (ch, key) {
-        screen.remove(context.table)
-        screen.remove(help)
-        edit(screen, jira, context.rows[context.table.rows.selected].key)
-    })
     help.applyKeysTo(screen)
     screen.render()
 }
