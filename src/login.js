@@ -22,51 +22,51 @@ function login(screen) {
         parent: screen,
         label: ' Authenticate '
     }))
-    const image = contrib.picture({
+    const image = blessed.image({
         parent: form,
-        left: screen.width / 4,
-        top: 2,
+        left: "center",
+        top: 1,
+        scale: 0.1,
         file: './assets/ledger.png',
-        cols: screen.width / 2,
         onReady: () => screen.render()
     })
     var headlineLabel = blessed.text(styles.label({
         parent: form,
-        top: 20,
+        top: 19,
         left: 'center',
         content: 'Welcome to Jira Avocado, a terminal user interface to make JIRA great again'
     }))
     var pushlineLabel = blessed.text(styles.label({
         parent: form,
-        top: 21,
+        top: 20,
         left: 'center',
         content: '... and also for those who both hate JIRA a lot and like avocados'
     }))
     var emailLabel = blessed.text(styles.label({
         parent: form,
         left: 2,
-        top: 25,
+        top: 24,
         name: 'emailLabel',
         content: 'Email:'
     }));
     var tokenLabel = blessed.text(styles.label({
         parent: form,
         left: 2,
-        top: 28,
+        top: 27,
         name: 'tokenLabel',
         content: 'Token:'
     }));
     var urlLabel = blessed.text(styles.label({
         parent: form,
         left: 2,
-        top: 31,
+        top: 30,
         name: 'jiraUrlLabel',
         content: 'JIRA URL:'
     }))
     var rememberMeLabel = blessed.text(styles.label({
         parent: form,
         left: 2,
-        top: 34,
+        top: 33,
         name: 'rememberMe',
         content: 'Remember me:'
     }))
@@ -74,7 +74,7 @@ function login(screen) {
         parent: form,
         inputOnFocus: true,
         left: 2,
-        top: 26,
+        top: 25,
         height: 1,
         width: '97%',
         name: 'email',
@@ -85,7 +85,7 @@ function login(screen) {
         censor: true,
         inputOnFocus: true,
         left: 2,
-        top: 29,
+        top: 28,
         height: 1,
         width: '97%',
         name: 'token',
@@ -95,7 +95,7 @@ function login(screen) {
         parent: form,
         inputOnFocus: true,
         left: 2,
-        top: 32,
+        top: 31,
         width: '97%',
         height: 1,
         name: 'jiraUrl',
@@ -105,7 +105,7 @@ function login(screen) {
         parent: form,
         inputOnFocus: true,
         left: 2,
-        top: 35,
+        top: 34,
         height: 1,
         name: 'rememberMe'
     }))
