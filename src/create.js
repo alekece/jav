@@ -201,6 +201,7 @@ exports.create = function (screen, jira) {
     (async () => {
 	projects = await jira.listProjects();
 	screen.render();
+	form.focus();
     })();    
 };
 
