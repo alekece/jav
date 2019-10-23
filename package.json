@@ -1,0 +1,24 @@
+{
+  "name": "jav",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "blessed": "^0.1.81",
+    "jira-client": "^6.12.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alekece/jav.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alekece/jav/issues"
+  },
+  "homepage": "https://github.com/alekece/jav#readme"
+}
