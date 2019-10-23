@@ -96,7 +96,7 @@ function renderTableView(screen, jira) {
     // Create empty component
     var grid = new contrib.grid({ rows: 12, cols: 12, screen: screen })
 
-    context.table = grid.set(0, 0, 10, 12, contrib.table, styles.table({
+    context.table = grid.set(2, 0, 8, 12, contrib.table, styles.table({
         keys: true
         , parent: screen
         , interactive: true
@@ -126,15 +126,11 @@ function renderTableView(screen, jira) {
                 {
                     headers: header,
                     data: context.rows.map(row => {
-                        /*if (row) {
-                             var arr = Object.values(row)
-                             arr.forEach(
-                                 function (value, index) {
-                                     console.log("Value is type of : " + typeof value)
-                                 }
-                             )
-                         } */
-                        return Object.values(row)
+                        var tab = Object.values(row);
+                        tab.forEach(function (part, index, theArray) {
+                            tab[index] = part.substring(0, part.substring(0, 4));
+                        });
+                        return tab
                     })
                 })
 
@@ -192,6 +188,13 @@ function renderTableView(screen, jira) {
     })
 
 
+    shortcts.push({
+        'key': "a",
+        'desc': "Custom List",
+        'callback': function () {
+
+        }
+    })
     var help = grid.set(10, 0, 2, 12, widget.helper, styles.helper(
         {
             parent: screen,
