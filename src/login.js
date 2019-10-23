@@ -24,44 +24,57 @@ function login(screen) {
     }))
     const image = contrib.picture({
         parent: form,
-        left: 50,
+        left: screen.width / 4,
+        top: 2,
         file: './assets/ledger.png',
-        cols: 110,
+        cols: screen.width / 2,
         onReady: () => screen.render()
     })
-    var emailLabel = blessed.text({
+    var headlineLabel = blessed.text(styles.label({
+        parent: form,
+        top: 20,
+        left: 'center',
+        content: 'Welcome to Jira Avocado, a terminal user interface to make JIRA great again'
+    }))
+    var pushlineLabel = blessed.text(styles.label({
+        parent: form,
+        top: 21,
+        left: 'center',
+        content: '... and also for those who both hate JIRA a lot and like avocados'
+    }))
+    var emailLabel = blessed.text(styles.label({
         parent: form,
         left: 2,
-        top: 15,
+        top: 25,
         name: 'emailLabel',
         content: 'Email:'
-    });
-    var tokenLabel = blessed.text({
+    }));
+    var tokenLabel = blessed.text(styles.label({
         parent: form,
         left: 2,
-        top: 18,
+        top: 28,
         name: 'tokenLabel',
         content: 'Token:'
-    });
-    var urlLabel = blessed.text({
+    }));
+    var urlLabel = blessed.text(styles.label({
         parent: form,
         left: 2,
-        top: 21,
+        top: 31,
         name: 'jiraUrlLabel',
         content: 'JIRA URL:'
-    })
-    var rememberMeLabel = blessed.text({
+    }))
+    var rememberMeLabel = blessed.text(styles.label({
         parent: form,
         left: 2,
-        top: 24,
+        top: 34,
         name: 'rememberMe',
         content: 'Remember me:'
-    })
+    }))
     var email = blessed.textbox(styles.input({
         parent: form,
         inputOnFocus: true,
         left: 2,
-        top: 16,
+        top: 26,
         height: 1,
         width: '97%',
         name: 'email',
@@ -72,7 +85,7 @@ function login(screen) {
         censor: true,
         inputOnFocus: true,
         left: 2,
-        top: 19,
+        top: 29,
         height: 1,
         width: '97%',
         name: 'token',
@@ -82,21 +95,20 @@ function login(screen) {
         parent: form,
         inputOnFocus: true,
         left: 2,
-        top: 22,
+        top: 32,
         width: '97%',
         height: 1,
         name: 'jiraUrl',
         value: auth[2],
     }));
-    var rememberMe = blessed.checkbox({
+    var rememberMe = blessed.checkbox(styles.label({
         parent: form,
         inputOnFocus: true,
         left: 2,
-        top: 25,
+        top: 35,
         height: 1,
-        width: '97%',
         name: 'rememberMe'
-    })
+    }))
 
     var helper = grid.set(10, 0, 2, 12, widget.helper, {
         shortcuts: [
