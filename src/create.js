@@ -1,4 +1,6 @@
 const JiraApi = require("jira-client");
+const blessed = require("blessed");
+
 const styles = require("./styles");
 
 const jira = new JiraApi({
@@ -9,14 +11,11 @@ const jira = new JiraApi({
     apiVersion: "2",
     strictSSL: true
 });
+const screen = blessed.screen();
 
 let projects = [];
-
 let projectId = null;
 let issueTypeId = null;
-
-const blessed = require("blessed");
-const screen = blessed.screen();
 
 const form = blessed.form({
     parent: screen,
@@ -31,12 +30,11 @@ const form = blessed.form({
 
 const list = blessed.list({
     parent: screen,
-    mouse: true,
-    keys: true,
     left: "81%",
     top: 0,
-    width: "100%",
-    height: "100%"
+    border: {
+	type: 'line'
+    }
 });
 
 const projectLabel = blessed.text({
@@ -146,7 +144,6 @@ projectInput.on("blur", () => {
 	projectId = filtered[0].id;
     }
 
-    list.setItems([]);
     screen.render();
 });
 
@@ -181,9 +178,18 @@ typeInput.on("blur", async () => {
 	typeInput.clearValue();
     }
 
-    list.setItems([]);
     screen.render();
 });
+
+summaryInput.on("focus", () => {
+    list.setItems([]);
+    screen.render();
+})
+
+descriptionInput.on("focus", () => {
+    list.setItems([]);
+    screen.render();
+})
 
 submit.on("press", () => {
     form.submit();
