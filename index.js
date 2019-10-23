@@ -1,15 +1,11 @@
 const JiraApi = require('jira-client');
-const auth = require('./src/auth.js')
-const table = require('./src/tickets.js')
-var blessed = require('blessed')
 
-const token = auth.retrieveToken()
 
 const jira = new JiraApi({
   protocol: 'https',
   host: 'ledgerhq.atlassian.net',
-  username: 'name@ledger.fr',
-  password: token,
+  username: 'julien.rouzieres@ledger.fr',
+  password: 'PyJ41iexvkLSSY6iS3xT4599',
   apiVersion: '2',
   strictSSL: true
 });
@@ -62,13 +58,6 @@ async function getProject() {
 }
 
 (async () => {
-    const o = await getProject();
-    //console.log(JSON.stringify(o));
+    const o = await jira.getIssue('INFRA-1292');
+    console.log(JSON.stringify(o));
 })();
-
-var screen = blessed.screen()
-screen.key(['q', 'C-c'], function () {
-    return process.exit(0);
-});
-
-table.renderTableView(screen,jira)
