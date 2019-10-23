@@ -1,56 +1,50 @@
 const foregroundColor = '#ecf0f1'
-const backgroundColor = '#2c3e50'
-const inputBackgroundColor = '#34495e'
+const highlightBackgroundColor = '#2a2c20'
+const borderType = 'line'
 
 function input(options) {
     options.style = {
-        bg: inputBackgroundColor,
-        focus: {
-            bg: 'red'
-        },
-        hover: {
-            bg: 'red'
-        }
+        bg: highlightBackgroundColor
     }
 
     return options
 }
 
-function button() {
-    return {
-        bg: 'blue',
-        focus: {
-            bg: 'red'
-        },
-        hover: {
-            bg: 'red'
-        }
-    }
-}
-
 function label(options) {
     options.style = {
-        bg: backgroundColor,
         fg: foregroundColor
     }
 
     return options
 }
 
+function form(options) {
+    options.style = {
+        border: {
+            type: borderType
+        }
+    }
+
+    return options
+}
+
 function table(options) {
-    options.fg = 'white'
-    options.selectedFg = 'white'
-    options.selectedBg = 'blue'
+    options.fg = foregroundColor
+    options.selectedFg = foregroundColor
+    options.selectedBg = highlightBackgroundColor
+
+    return options
+}
+
+function button(options) {
     return options
 }
 
 function helper(options) {
     options.style = {
         fg: foregroundColor,
-        bg: backgroundColor,
         border: {
-            bg: backgroundColor,
-            type: 'line'
+            type: borderType
         }
     }
 
@@ -62,5 +56,6 @@ module.exports = {
     helper: helper,
     label: label,
     button: button,
-    table: table
+    table: table,
+    form: form
 }
