@@ -191,10 +191,6 @@ exports.create = function (jira) {
 		screen.render();
 	});
 
-	screen.key("q", () => {
-		process.exit(0);
-	});
-
 	const helper = grid.set(10, 0, 2, 12, widget.helper, {
 		shortcuts: [
 			{ key: 'C-j', desc: 'Create JIRA', callback: () => form.submit() },
