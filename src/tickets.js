@@ -9,7 +9,7 @@ const { create } = require('./create.js')
 // Here are common variable (They can actually be passed through function, keep them here for readability)
 const header = ['Issue', 'Type', 'Creator', 'Creation Date', 'Project', 'Status', 'Component', 'Summary']
 const keyBindings = [['i', 'key'], ['t', 'type'], ['c', 'creator'],
-['d', 'created'], ['p', 'project'], ['s', 'status'], ['o', 'component'], ['s', 'summary']]
+['d', 'created'], ['p', 'project'], ['s', 'status'], ['o', 'component'], ['l', 'summary']]
 const colorValues = ['magenta', 'yellow', 'green', 'cyan', 'red', 'blue']
 
 async function fetchJiraTickets(jira, jql) {
