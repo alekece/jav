@@ -7,7 +7,7 @@ const styles = require("./styles");
 const widget = require('./widget');
 
 exports.edit = function (jira, ticketId) {
-    var screen = widget.screen()
+    var screen = widget.screen(true)
     let projects = [];
     let issue = null;
     let projectId = null;
@@ -207,6 +207,24 @@ exports.edit = function (jira, ticketId) {
                     screen.destroy()
                     create(jira)
                 }
+            },
+            {
+                key: 'C-e', desc: 'Edit JIRA', callback: () => {
+                    var prompt = blessed.prompt({
+                        parent: screen,
+                        left: 'center',
+                        top: 'center'
+                    })
+                    prompt.readInput('Ticket Key', '', (err, value) => {
+                        if (value) {
+                            screen.destroy()
+                            screen = null
+                            edit(jira, value)
+                        } else {
+                            screen.render()
+                        }
+                    })
+                }
             }
         ],
         shortcutByColumn: 4
@@ -219,6 +237,7 @@ exports.edit = function (jira, ticketId) {
         screen.render()
         projects = await jira.listProjects();
         issue = await jira.getIssue(ticketId);
+        screen.loaded();
         projectInput.setValue(issue.fields.project.key);
         projectId = issue.fields.project.id;
         typeInput.setValue(issue.fields.issuetype.name);
