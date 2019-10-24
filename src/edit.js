@@ -9,9 +9,11 @@ const widget = require('./widget');
 exports.edit = function (jira, ticketId) {
     var screen = widget.screen()
     let projects = [];
+    let statues = [];
     let issue = null;
     let projectId = null;
     let issueTypeId = null;
+    let statusId = null;
 
     const grid = new contrib.grid({ rows: 12, cols: 12, screen: screen });
 
@@ -86,21 +88,58 @@ exports.edit = function (jira, ticketId) {
         name: "summaryInput"
     }));
 
+    const assigneeLabel = blessed.text({
+	parent: form,
+	left: 2,
+	top: 11,
+	name: "assigneeLabel",
+	content: "Assignee:"
+    });
+    
+    const assigneeInput = blessed.textbox(styles.input({
+	parent: form,
+	mouse: true,
+	inputOnFocus: true,
+	left: 2,
+	top: 12,
+	height: 1,
+	name: "assigneeInput"
+    }));
+
+    const statusLabel = blessed.text({
+	parent: form,
+	left: 2,
+	top: 14,
+	name: "statusLabel",
+	content: "Status:"
+    });
+    
+    const statusInput = blessed.textbox(styles.input({
+	parent: form,
+	mouse: true,
+	inputOnFocus: true,
+	left: 2,
+	top: 15,
+	height: 1,
+	name: "statusInput"
+    }));
+    
     const descriptionLabel = blessed.text({
-        parent: form,
-        left: 2,
-        top: 11,
-        name: "descriptionLabel",
-        content: "Description:"
+	parent: form,
+	left: 2,
+	top: 17,
+	name: "descriptionLabel",
+	content: "Description:"
     });
 
     const descriptionInput = blessed.textarea(styles.input({
-        parent: form,
-        mouse: true,
-        keys: true,
-        left: 2,
-        top: 12,
-        name: "descriptionInput"
+	parent: form,
+	mouse: true,
+	keys: true,
+	left: 2,
+	top: 18,
+	bottom: 5,
+	name: "descriptionInput"
     }));
 
     projectInput.on("focus", () => {
@@ -155,6 +194,24 @@ exports.edit = function (jira, ticketId) {
         screen.render();
     });
 
+    statusInput.on("focus", () => {
+        list.setItems(statues.map(status => status.name));
+        screen.render();
+    });
+
+    statusInput.on("blur", () => {
+        const value = statusInput.getValue();
+        const filtered = statues.filter(status => status.name === value);
+
+        if (filtered.length === 0) {
+            statusInput.clearValue();
+        } else {
+            statusId = filtered[0].id;
+        }
+
+        screen.render();
+    });
+    
     summaryInput.on("focus", () => {
         list.setItems([]);
         screen.render();
@@ -176,11 +233,24 @@ exports.edit = function (jira, ticketId) {
                     description: descriptionInput.getValue(),
                     issuetype: {
                         id: issueTypeId
-                    }
+                    },
+		    status: {
+			id: statusId
+		    }
                 }
             });
 
             screen.render();
+        }
+	if (assigneeInput.getValue()) {
+	    try {
+		const issue = await jira.updateAssignee(ticketId, assigneeInput.getValue());
+
+		screen.render();
+	    }
+	    catch (err) {
+		assigneeInput.clearValue();
+	    }
         }
     });
 
@@ -211,11 +281,15 @@ exports.edit = function (jira, ticketId) {
 
     (async () => {
         projects = await jira.listProjects();
+	statues = await jira.listStatus();
         issue = await jira.getIssue(ticketId);
         projectInput.setValue(issue.fields.project.key);
         projectId = issue.fields.project.id;
         typeInput.setValue(issue.fields.issuetype.name);
         issueTypeId = issue.fields.issuetype.id;
+	assigneeInput.setValue(issue.fields.assignee.name);
+	statusInput.setValue(issue.fields.status.name);
+	statusId = issue.fields.status.id;
         summaryInput.setValue(issue.fields.summary);
         descriptionInput.setValue(issue.fields.description);
         screen.render();
