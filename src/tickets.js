@@ -12,6 +12,8 @@ const header = ['Issue (i)', colors.red('Type (t)'), 'Creator (c)', 'Creation Da
 const keyBindings = [['i', 'key'], ['t', 'type'], ['c', 'creator'],
 ['d', 'created'], ['p', 'project'], ['s', 'status'], ['o', 'component'], ['s', 'summary']]
 
+const colorValues = ['red', 'magenta'];
+
 async function fetchJiraTickets(jira, jql) {
     const issues = await jira.searchJira(jql);
     return issues;
@@ -41,33 +43,50 @@ function formatDate(stringDate) {
         { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' })
 }
 
+
+function float2Grey( percentage ) {
+    var color_part_dec = 200 * percentage;
+    var color_part_hex = Number(parseInt( color_part_dec , 10)).toString(16);
+    console.log("Return value : "+"#" + color_part_hex+ color_part_hex+ color_part_hex)
+    return "#" + color_part_hex+ color_part_hex+ color_part_hex;
+}
+
 function refreshData(screen, context) {
-    var countPerType = {}
+    var countPerStatus = {}
+    var colorPerStatus = {}
     var total = 0;
 
     context.rows.forEach(function (row) {
-        countPerType[row.type] = countPerType[row.type] ? countPerType[row.type] + 1 : 1
+        countPerStatus[row.status] = countPerStatus[row.status] ? countPerStatus[row.status] + 1 : 1
         total ++
     })
     
     var percent =[]
-    var cumulPercent = 0
-    Object.values(countPerType).forEach(function mapApply(value, key, map) {
+    var idxColor = 0
+    for( let [key, value] of Object.entries(countPerStatus)){
         var perc = value * 100 / total;
-        cumulPercent = cumulPercent + perc
         var stackElem = {
             percent : Math.floor(perc) ,
-            stroke :  Math.floor((256 / 100) * cumulPercent)
+            stroke :  colorValues[idxColor % colorValues.length]
         }
         percent.push(stackElem)
-    })
+        colorPerStatus[key] = colorValues[idxColor % colorValues.length];
+    }
 
+    console.log("------> "+JSON.stringify(colorPerStatus, null, 4))
+    context.gauge.setStack(percent)
     context.table.setData(
         {
             headers: header,
             data: context.rows.filter((e) => context.filter(e)).map(row => {
                 return Object.values(row).map(function (part, index) {
-                    return part.substring(0, context.columnWidth[index]);
+                    if(index == 5) {
+                        var cl = colorPerStatus[part]
+                        //console.log("cl is "+cl + " part is : "+ part+ " -- "+ JSON.stringify(colorPerStatus, null, 2))
+                        return colors[cl](part.substring(0, context.columnWidth[index]))
+                    }else {
+                        return part.substring(0, context.columnWidth[index]);
+                    }
                 });
             })
         })
@@ -138,7 +157,6 @@ function renderTableView(jira) {
                         });
                     })
                 })
-
             screen.render()
         }
     }
