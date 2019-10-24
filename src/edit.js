@@ -188,15 +188,11 @@ exports.edit = function (jira, ticketId) {
         screen.render();
     });
 
-    screen.key("q", () => {
-        process.exit(0);
-    });
-
     const helper = grid.set(10, 0, 2, 12, widget.helper, {
         shortcuts: [
-            { key: 'C-e', desc: 'Edit input with editor', callback: () => form.submit() },
+            { key: 'C-s', desc: 'Save and submit the change', callback: () => form.submit() },
             {
-                key: 'C-h', desc: 'Go to list view', callback: () => {
+                key: 'C-b', desc: 'Go to list view', callback: () => {
                     screen.destroy()
                     tickets.renderTableView(jira)
                 }
