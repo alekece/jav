@@ -96,7 +96,7 @@ function edit (jira, ticketId) {
     const assigneeLabel = blessed.text(styles.label({
 	parent: form,
 	left: 2,
-	top: 11,
+	top: 10,
 	name: "assigneeLabel",
 	content: "Assignee:"
     }));
@@ -106,15 +106,16 @@ function edit (jira, ticketId) {
 	mouse: true,
 	inputOnFocus: true,
 	left: 2,
-	top: 12,
-	height: 1,
+	top: 11,
+    height: 1,
+    width: "97%",    
 	name: "assigneeInput"
     }));
 
     const statusLabel = blessed.text(styles.label({
 	parent: form,
 	left: 2,
-	top: 14,
+	top: 13,
 	name: "statusLabel",
 	content: "Status:"
     }));
@@ -124,15 +125,16 @@ function edit (jira, ticketId) {
 	mouse: true,
 	inputOnFocus: true,
 	left: 2,
-	top: 15,
-	height: 1,
+	top: 14,
+    height: 1,
+    width: "97%",    
 	name: "statusInput"
     }));
     
     const descriptionLabel = blessed.text(styles.label({
 	parent: form,
 	left: 2,
-	top: 17,
+	top: 16,
 	name: "descriptionLabel",
 	content: "Description:"
     }));
@@ -142,8 +144,9 @@ function edit (jira, ticketId) {
 	mouse: true,
 	keys: true,
 	left: 2,
-	top: 18,
-	bottom: 5,
+	top: 17,
+    bottom: 1,
+    width: "97%",    
 	name: "descriptionInput"
     }));
 
