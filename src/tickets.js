@@ -10,9 +10,7 @@ const { create } = require('./create.js')
 const header = ['Issue', 'Type', 'Creator', 'Creation Date', 'Project','Status', 'Component', 'Summary']
 const keyBindings = [['i', 'key'], ['t', 'type'], ['c', 'creator'],
 ['d', 'created'], ['p', 'project'], ['s', 'status'], ['o', 'component'], ['s', 'summary']]
-const colorValues = ['magenta', 'green', 'cyan', 'grey', 'red', 'blue']
-
-const colorValues = ['red', 'magenta'];
+const colorValues = ['magenta', 'green', 'cyan', 'red', 'blue']
 
 async function fetchJiraTickets(jira, jql) {
     const issues = await jira.searchJira(jql);
@@ -43,14 +41,6 @@ function formatDate(stringDate) {
         { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' })
 }
 
-
-function float2Grey( percentage ) {
-    var color_part_dec = 200 * percentage;
-    var color_part_hex = Number(parseInt( color_part_dec , 10)).toString(16);
-    console.log("Return value : "+"#" + color_part_hex+ color_part_hex+ color_part_hex)
-    return "#" + color_part_hex+ color_part_hex+ color_part_hex;
-}
-
 function refreshData(screen, context) {
     var countPerStatus = {}
     var colorPerStatus = {}
@@ -71,9 +61,9 @@ function refreshData(screen, context) {
         }
         percent.push(stackElem)
         colorPerStatus[key] = colorValues[idxColor % colorValues.length];
+        idxColor++
     }
-
-    console.log("------> "+JSON.stringify(colorPerStatus, null, 4))
+    
     context.gauge.setStack(percent)
     context.table.setData(
         {
@@ -82,7 +72,6 @@ function refreshData(screen, context) {
                 return Object.values(row).map(function (part, index) {
                     if(index == 5) {
                         var cl = colorPerStatus[part]
-                        //console.log("cl is "+cl + " part is : "+ part+ " -- "+ JSON.stringify(colorPerStatus, null, 2))
                         return colors[cl](part.substring(0, context.columnWidth[index]))
                     }else {
                         return part.substring(0, context.columnWidth[index]);
