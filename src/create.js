@@ -212,7 +212,9 @@ exports.create = function (jira) {
                             screen.destroy()
                             screen = null
                             edit(jira, value)
-                        }
+                        } else {
+							screen.render()
+						}
                     })
                 }
             }

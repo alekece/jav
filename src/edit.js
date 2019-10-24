@@ -7,7 +7,7 @@ const styles = require("./styles");
 const widget = require('./widget');
 
 exports.edit = function (jira, ticketId) {
-    var screen = widget.screen()
+    var screen = widget.screen(true)
     let projects = [];
     let issue = null;
     let projectId = null;
@@ -215,6 +215,8 @@ exports.edit = function (jira, ticketId) {
                             screen.destroy()
                             screen = null
                             edit(jira, value)
+                        } else {
+                            screen.render()
                         }
                     })
                 }
@@ -228,6 +230,7 @@ exports.edit = function (jira, ticketId) {
     (async () => {
         projects = await jira.listProjects();
         issue = await jira.getIssue(ticketId);
+        screen.loaded();
         projectInput.setValue(issue.fields.project.key);
         projectId = issue.fields.project.id;
         typeInput.setValue(issue.fields.issuetype.name);

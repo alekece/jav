@@ -178,6 +178,8 @@ function renderTableView(jira) {
                     screen.destroy()
                     screen = null
                     edit(jira, value)
+                } else {
+                    screen.render()
                 }
             })
         }

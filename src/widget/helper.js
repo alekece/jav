@@ -5,6 +5,13 @@ function helper(options) {
     options.label = ' Help '
     options.tag = true
     options.border = { type: 'line' }
+    options.shortcuts.push({
+        key: 'q',
+        desc: 'Quit',
+        callback: () => {
+            return process.exit(0)
+        }
+    })
 
     var box = blessed.box(styles.helper(options))
 
