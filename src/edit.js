@@ -317,7 +317,9 @@ function edit(jira, ticketId) {
         projectId = issue.fields.project.id;
         typeInput.setValue(issue.fields.issuetype.name);
         issueTypeId = issue.fields.issuetype.id;
-        assigneeInput.setValue(issue.fields.assignee.name);
+	if (issue.fields.assignee) {
+            assigneeInput.setValue(issue.fields.assignee.name);
+	}
         statusInput.setValue(issue.fields.status.name);
         statusId = issue.fields.status.id;
         summaryInput.setValue(issue.fields.summary);
