@@ -249,7 +249,7 @@ function renderTableView(jira) {
     })
 
     shortcts.push({
-        key: 'C-e', desc: 'Edit JIRA', callback: () => {
+        key: 'C-o', desc: 'Edit JIRA', callback: () => {
             var prompt = blessed.prompt(styles.prompt({
                 parent: screen,
                 left: 'center',

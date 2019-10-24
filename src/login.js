@@ -132,7 +132,7 @@ function login() {
                 apiVersion: '2',
                 strictSSL: true
             });
-            await jira.getServerInfo()
+            await jira.getCurrentUser()
             if (jira && data.rememberMe) {
                 fs.writeFileSync('./.login', data.email + '\n' + data.token + '\n' + data.jiraUrl)
             }
