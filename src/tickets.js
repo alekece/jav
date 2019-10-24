@@ -131,13 +131,14 @@ function renderTableView(jira) {
     })
     shortcts.push({
         key: '/',
-        desc: 'Search table',
+        desc: '',
         callback: () => {
-            var prompt = blessed.prompt({
+            var prompt = blessed.prompt(styles.prompt({
                 parent: screen,
                 left: 'center',
-                top: 'center'
-            })
+                top: 'center',
+                height: 10
+            }))
             prompt.readInput('Search', '', (err, value) => {
                 if (value) {
                     context.filter = (s) => JSON.stringify(s).includes(value)
@@ -150,11 +151,12 @@ function renderTableView(jira) {
         key: 'C-f',
         desc: 'Custom JQL',
         callback: () => {
-            var prompt = blessed.prompt({
+            var prompt = blessed.prompt(styles.prompt({
                 parent: screen,
                 left: 'center',
-                top: 'center'
-            })
+                top: 'center',
+                height: 10
+            }))
             prompt.readInput('Custom JQL ', context.jql, (err, value) => {
                 if (value) {
                     context.jql = value.trim()
