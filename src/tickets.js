@@ -45,7 +45,7 @@ function refreshData(screen, context) {
     context.table.setData(
         {
             headers: header,
-            data: context.rows.map(row => {
+            data: context.rows.filter((e) => context.filter(e)).map(row => {
                 return Object.values(row).map(function (part, index) {
                     return part.substring(0, context.columnWidth[index]);
                 });
