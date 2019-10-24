@@ -24,7 +24,9 @@ function form(options) {
     options.style = {
         bg: backgroundColor,
         border: {
-            type: borderType
+            type: borderType,
+            bg: backgroundColor,
+            fg: foregroundColor
         }
     }
 
@@ -36,11 +38,27 @@ function table(options) {
     options.selectedFg = foregroundColor
     options.selectedBg = highlightBackgroundColor
     options.bg = backgroundColor
+    options.style = {
+        border: {
+            fg: backgroundColor,
+            bg: backgroundColor
+        }
+    }
 
     return options
 }
 
-function button(options) {
+function box(options) {
+    options.style = {
+        bg: backgroundColor,
+        fg: foregroundColor,
+        border: {
+            type: 'line',
+            fg: foregroundColor,
+            bg: backgroundColor
+        }
+    }
+
     return options
 }
 
@@ -60,7 +78,7 @@ module.exports = {
     input: input,
     helper: helper,
     label: label,
-    button: button,
     table: table,
-    form: form
+    form: form,
+    box: box
 }

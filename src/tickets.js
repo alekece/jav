@@ -71,14 +71,17 @@ function renderTableView(jira) {
     // Create empty component
     var grid = new contrib.grid({ rows: 12, cols: 12, screen: screen })
 
-    context.table = grid.set(2, 0, 8, 12, contrib.table, styles.table({
+    var box = grid.set(2, 0, 8, 12, blessed.box, styles.box({
+        parent: screen,
+        label: ' Issues navigation'
+    })) 
+
+    context.table = contrib.table(styles.table({
         keys: true
-        , parent: screen
+        , parent: box
         , interactive: true
-        , label: 'Issues Navigator'
-        , width: '80%'
-        , height: '80%'
-        , border: { type: "line", fg: "cyan" }
+        , left: 1
+        , top: 1
         , columnSpacing: 5 //in chars
         , columnWidth: context.columnWidth
     }))
@@ -165,7 +168,7 @@ function renderTableView(jira) {
 
     var help = grid.set(10, 0, 2, 12, widget.helper, styles.helper(
         {
-            parent: screen,
+            parent: box,
             shortcutByColumn: 4,
             shortcuts: shortcts
         }))
