@@ -210,11 +210,12 @@ exports.edit = function (jira, ticketId) {
             },
             {
                 key: 'C-e', desc: 'Edit JIRA', callback: () => {
-                    var prompt = blessed.prompt({
+                    var prompt = blessed.prompt(styles.prompt({
                         parent: screen,
                         left: 'center',
-                        top: 'center'
-                    })
+                        top: 'center',
+                        height: 10
+                    }))
                     prompt.readInput('Ticket Key', '', (err, value) => {
                         if (value) {
                             screen.destroy()
