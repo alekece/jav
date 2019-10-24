@@ -42,6 +42,24 @@ function formatDate(stringDate) {
 }
 
 function refreshData(screen, context) {
+    var countPerType = {}
+    var total = 0;
+
+    context.rows.forEach(function (row) {
+        countPerType[row.type] = countPerType[row.type] ? countPerType[row.type] + 1 : 1
+        total ++
+    })
+    
+    var percent =[]
+    Object.values(countPerType).forEach(function mapApply(value, key, map) {
+        var perc = value * 100 / total;
+        var stackElem = {
+            percent : perc ,
+            stroke :  256 / 100 * perc
+        }
+        percent.push(stackElem)
+    })
+
     context.table.setData(
         {
             headers: header,
