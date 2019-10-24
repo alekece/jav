@@ -1,6 +1,6 @@
 const blessed = require("blessed");
 const contrib = require('blessed-contrib');
-const tickets = require('./tickets.js')
+const tickets = require('./tickets')
 const styles = require("./styles");
 const widget = require('./widget');
 
@@ -24,6 +24,7 @@ exports.create = function (jira) {
 		parent: screen,
 		left: 0,
 		top: 0,
+        label: ' Suggestion ',
 		border: {
 			type: 'line'
 		}
@@ -229,9 +230,10 @@ exports.create = function (jira) {
 	helper.applyKeysTo(form);
 
 	(async () => {
-		projects = await jira.listProjects();
 		screen.render();
+		projects = await jira.listProjects();
 		form.focus();
+		screen.render();
 	})();
 };
 

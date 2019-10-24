@@ -26,7 +26,8 @@ exports.edit = function (jira, ticketId) {
     const list = grid.set(0, 10, 10, 2, blessed.list, styles.box({
         parent: screen,
         left: 0,
-        top: 0,
+        top: 1,
+        label: ' Suggestion ',
         border: {
             type: 'line'
         }
@@ -231,7 +232,9 @@ exports.edit = function (jira, ticketId) {
 
     helper.applyKeysTo(form);
 
+
     (async () => {
+        screen.render()
         projects = await jira.listProjects();
         issue = await jira.getIssue(ticketId);
         screen.loaded();
