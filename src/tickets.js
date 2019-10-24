@@ -166,6 +166,23 @@ function renderTableView(jira) {
         }
     })
 
+    shortcts.push({
+        key: 'C-e', desc: 'Edit JIRA', callback: () => {
+            var prompt = blessed.prompt({
+                parent: screen,
+                left: 'center',
+                top: 'center'
+            })
+            prompt.readInput('Ticket Key', '', (err, value) => {
+                if (value) {
+                    screen.destroy()
+                    screen = null
+                    edit(jira, value)
+                }
+            })
+        }
+    })
+
     var help = grid.set(10, 0, 2, 12, widget.helper, styles.helper(
         {
             parent: box,

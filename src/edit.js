@@ -202,6 +202,22 @@ exports.edit = function (jira, ticketId) {
                     screen.destroy()
                     create(jira)
                 }
+            },
+            {
+                key: 'C-e', desc: 'Edit JIRA', callback: () => {
+                    var prompt = blessed.prompt({
+                        parent: screen,
+                        left: 'center',
+                        top: 'center'
+                    })
+                    prompt.readInput('Ticket Key', '', (err, value) => {
+                        if (value) {
+                            screen.destroy()
+                            screen = null
+                            edit(jira, value)
+                        }
+                    })
+                }
             }
         ],
         shortcutByColumn: 4
