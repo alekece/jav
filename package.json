@@ -2,7 +2,9 @@
   "name": "jav",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "bin": {
+    "jav": "./bin/jav"
+  },
   "dependencies": {
     "blessed": "^0.1.81",
     "blessed-contrib": "^4.8.18",
