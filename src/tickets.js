@@ -3,8 +3,8 @@ const contrib = require('blessed-contrib')
 const colors = require('colors/safe')
 const styles = require('./styles')
 const widget = require('./widget')
-const {edit} = require('./edit.js')
-const {create} = require('./create.js')
+const { edit } = require('./edit.js')
+const { create } = require('./create.js')
 
 // Here are common variable (They can actually be passed through function, keep them here for readability)
 
@@ -48,11 +48,9 @@ function refreshData(screen, context) {
             data: context.rows.map(row => {
                 //return Object.values(row)
                 return Object.values(row).map(function (part, index) {
-//                            if(part) {
-                        return part.substring(0, context.columnWidth[index]);
-//                          }
+                    return part.substring(0, context.columnWidth[index]);
                 });
-                return tab 
+                return tab
             })
         })
     screen.render()
@@ -81,7 +79,7 @@ function renderTableView(jira) {
     var box = grid.set(2, 0, 8, 12, blessed.box, styles.box({
         parent: screen,
         label: ' Issues navigation'
-    })) 
+    }))
 
     context.table = contrib.table(styles.table({
         keys: true
@@ -112,11 +110,11 @@ function renderTableView(jira) {
                     data: context.rows.map(row => {
                         //return Object.values(row)
                         return Object.values(row).map(function (part, index) {
-//                            if(part) {
-                                return part.substring(0, context.columnWidth[index]);
-  //                          }
+                            //                            if(part) {
+                            return part.substring(0, context.columnWidth[index]);
+                            //                          }
                         });
-                        return tab 
+                        return tab
                     })
                 })
 
