@@ -102,6 +102,7 @@ exports.create = function (jira) {
 		keys: true,
 		left: 2,
 		top: 11,
+		bottom: 1,
 		width: "97%",
 		name: "descriptionInput"
 	}));
