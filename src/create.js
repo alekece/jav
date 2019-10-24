@@ -1,7 +1,8 @@
 const blessed = require("blessed");
 const contrib = require('blessed-contrib');
 const tickets = require('./tickets')
-const styles = require("./styles");
+const styles = require('./styles');
+const edit = require('./edit.js');
 const widget = require('./widget');
 
 exports.create = function (jira) {
@@ -216,7 +217,7 @@ exports.create = function (jira) {
                         if (value) {
                             screen.destroy()
                             screen = null
-                            edit(jira, value)
+                            edit.edit(jira, value)
                         } else {
 							screen.render()
 						}

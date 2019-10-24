@@ -6,7 +6,8 @@ const { create } = require('./create.js')
 const styles = require("./styles");
 const widget = require('./widget');
 
-exports.edit = function (jira, ticketId) {
+exports.edit = edit
+function edit (jira, ticketId) {
     var screen = widget.screen(true)
     let projects = [];
     let issue = null;
