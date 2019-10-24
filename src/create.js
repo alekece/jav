@@ -1,6 +1,6 @@
 const blessed = require("blessed");
 const contrib = require('blessed-contrib');
-
+const tickets = require('./tickets.js')
 const styles = require("./styles");
 const widget = require('./widget');
 
