@@ -198,7 +198,7 @@ exports.create = function (jira) {
 			{ key: 'C-j', desc: 'Create JIRA', callback: () => form.submit() },
 			{ key: 'C-l', desc: 'Reset', callback: () => form.reset() },
 			{
-				key: 'C-h', desc: 'Go to list view', callback: () => {
+				key: 'C-b', desc: 'Go to list view', callback: () => {
 					screen.destroy()
 					screen = null
 					tickets.renderTableView(jira)

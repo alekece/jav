@@ -3,8 +3,8 @@ const contrib = require('blessed-contrib')
 const colors = require('colors/safe')
 const styles = require('./styles')
 const widget = require('./widget')
-const {edit} = require('./edit.js')
-const {create} = require('./create.js')
+const { edit } = require('./edit.js')
+const { create } = require('./create.js')
 
 // Here are common variable (They can actually be passed through function, keep them here for readability)
 
@@ -45,8 +45,13 @@ function refreshData(screen, context) {
     context.table.setData(
         {
             headers: header,
-            data: context.rows.filter((v) => context.filter(v)).map(o => Object.values(o))
-
+            data: context.rows.map(row => {
+                //return Object.values(row)
+                return Object.values(row).map(function (part, index) {
+                    return part.substring(0, context.columnWidth[index]);
+                });
+                return tab
+            })
         })
     if (screen) {
         screen.render()
@@ -61,7 +66,7 @@ function renderTableView(jira) {
         table: {},
         filter: (s) => true,
         jql: "",
-        columnWidth: [10, 8, 17, 40, 20, 15, 20, 30]
+        columnWidth: [10, 8, 17, 30, 15, 20, 20, 50]
     }
 
     // Fetch Data
@@ -105,9 +110,11 @@ function renderTableView(jira) {
                 {
                     headers: header,
                     data: context.rows.map(row => {
-                        var tab = Object.values(row);
-                        tab.forEach(function (part, index, theArray) {
-                            tab[index] = part.substring(0, part.substring(0, 4));
+                        //return Object.values(row)
+                        return Object.values(row).map(function (part, index) {
+                            //                            if(part) {
+                            return part.substring(0, context.columnWidth[index]);
+                            //                          }
                         });
                         return tab
                     })
