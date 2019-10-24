@@ -20,7 +20,7 @@ grey
 const header = ['Issue', 'Type', 'Creator', 'Creation Date', 'Project','Status', 'Component', 'Summary']
 const keyBindings = [['i', 'key'], ['t', 'type'], ['c', 'creator'],
 ['d', 'created'], ['p', 'project'], ['s', 'status'], ['o', 'component'], ['s', 'summary']]
-const colors = ['magenta', 'green', 'cyan', 'grey', 'red', 'blue']
+const colorValues = ['magenta', 'green', 'cyan', 'grey', 'red', 'blue']
 
 async function fetchJiraTickets(jira, jql) {
     const issues = await jira.searchJira(jql);
