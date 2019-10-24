@@ -10,7 +10,7 @@ const { create } = require('./create.js')
 const header = ['Issue', 'Type', 'Creator', 'Creation Date', 'Project','Status', 'Component', 'Summary']
 const keyBindings = [['i', 'key'], ['t', 'type'], ['c', 'creator'],
 ['d', 'created'], ['p', 'project'], ['s', 'status'], ['o', 'component'], ['s', 'summary']]
-const colorValues = ['magenta', 'green', 'cyan', 'red', 'blue']
+const colorValues = ['magenta', 'yellow',  'green', 'cyan', 'red', 'blue']
 
 async function fetchJiraTickets(jira, jql) {
     const issues = await jira.searchJira(jql);
