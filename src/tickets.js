@@ -51,7 +51,8 @@ function refreshData(screen, context) {
     screen.render()
 }
 
-function renderTableView(screen, jira) {
+function renderTableView(jira) {
+    var screen = widget.screen()
     const context = {
         rows: [],
         topBox: false,
@@ -148,15 +149,17 @@ function renderTableView(screen, jira) {
         key: 'enter',
         desc: 'Edit selected ticket',
         callback: () => {
-            screen.realloc()
-            edit(screen, jira, context.rows[context.table.rows.selected].key)
+            screen.destroy()
+            screen = null
+            edit(jira, context.rows[context.table.rows.selected].key)
         }
     })
 
     shortcts.push({
         key: 'C-c', desc: 'Create JIRA', callback: () => {
-            screen.realloc()
-            create(screen, jira)
+            screen.destroy()
+            screen = null
+            create(jira)
         }
     })
 

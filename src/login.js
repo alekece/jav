@@ -7,7 +7,8 @@ var blessed = require('blessed'),
     fs = require('fs')
 
 
-function login(screen) {
+function login() {
+    var screen = widget.screen()
     var auth = []
     try{
         auth = fs.readFileSync('./.login', 'utf8').split('\n')
@@ -133,9 +134,9 @@ function login(screen) {
         if(data.rememberMe){
             fs.writeFileSync('./.login', data.email + '\n' + data.token + '\n' + data.jiraUrl)
         }
-        screen.remove(helper)
-        screen.remove(form)
-        tickets.renderTableView(screen, jira)
+        screen.destroy()
+        screen = null
+        tickets.renderTableView(jira)
     })
 
     screen.render()

@@ -6,7 +6,8 @@ const { create } = require('./create.js')
 const styles = require("./styles");
 const widget = require('./widget');
 
-exports.edit = function (screen, jira, ticketId) {
+exports.edit = function (jira, ticketId) {
+    var screen = widget.screen()
     let projects = [];
     let issue = null;
     let projectId = null;
@@ -196,14 +197,14 @@ exports.edit = function (screen, jira, ticketId) {
             { key: 'C-e', desc: 'Edit input with editor', callback: () => form.submit() },
             {
                 key: 'C-h', desc: 'Go to list view', callback: () => {
-                    screen.realloc()
-                    tickets.renderTableView(screen, jira)
+                    screen.destroy()
+                    tickets.renderTableView(jira)
                 }
             },
             {
                 key: 'C-c', desc: 'Create JIRA', callback: () => {
-                    screen.realloc()
-                    create(screen, jira)
+                    screen.destroy()
+                    create(jira)
                 }
             }
         ],
