@@ -125,7 +125,7 @@ function renderTableView(jira) {
         var short = {
             'key': bind[0],
             'desc': "Sort by " + bind[1],
-            'callback': orderer(bind[1], 1)
+            'callback': orderer(bind[1], -1)
         }
         shortcts.push(short)
     })
