@@ -184,7 +184,9 @@ exports.create = function (jira) {
 				}
 			});
 
-			screen.render();
+			screen.destroy()
+			screen = null
+			tickets.renderTableView(jira)
 		}
 	});
 
@@ -194,7 +196,7 @@ exports.create = function (jira) {
 
 	const helper = grid.set(10, 0, 2, 12, widget.helper, {
 		shortcuts: [
-			{ key: 'C-j', desc: 'Create JIRA', callback: () => form.submit() },
+			{ key: 'C-p', desc: 'Create JIRA', callback: () => form.submit() },
 			{ key: 'C-l', desc: 'Reset', callback: () => form.reset() },
 			{
 				key: 'C-b', desc: 'Go to list view', callback: () => {
