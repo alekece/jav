@@ -53,7 +53,9 @@ function refreshData(screen, context) {
                 return tab
             })
         })
-    screen.render()
+    if (screen) {
+        screen.render()
+    }
 }
 
 function renderTableView(jira) {
@@ -70,10 +72,10 @@ function renderTableView(jira) {
     // Create empty component
     var grid = new contrib.grid({ rows: 12, cols: 12, screen: screen })
 
-    var box = grid.set(2, 0, 8, 12, blessed.box, styles.box({
+    var box = grid.set(0, 0, 10, 12, blessed.box, styles.box({
         parent: screen,
-        label: ' Issues navigation'
-    }))
+        label: ' Issues navigation '
+    })) 
 
     context.table = contrib.table(styles.table({
         keys: true
@@ -182,9 +184,11 @@ function renderTableView(jira) {
         key: 'enter',
         desc: 'Edit selected ticket',
         callback: () => {
-            screen.destroy()
-            screen = null
-            edit(jira, context.rows[context.table.rows.selected].key)
+            if (context.rows.length > 0) {
+                screen.destroy()
+                screen = null
+                edit(jira, context.rows[context.table.rows.selected].key)
+            }
         }
     })
 
@@ -193,6 +197,25 @@ function renderTableView(jira) {
             screen.destroy()
             screen = null
             create(jira)
+        }
+    })
+
+    shortcts.push({
+        key: 'C-e', desc: 'Edit JIRA', callback: () => {
+            var prompt = blessed.prompt({
+                parent: screen,
+                left: 'center',
+                top: 'center'
+            })
+            prompt.readInput('Ticket Key', '', (err, value) => {
+                if (value) {
+                    screen.destroy()
+                    screen = null
+                    edit(jira, value)
+                } else {
+                    screen.render()
+                }
+            })
         }
     })
 
