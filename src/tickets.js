@@ -42,6 +42,8 @@ function formatDate(stringDate) {
 }
 
 function refreshData(screen, context) {
+    var typeMappings = {}
+
     context.table.setData(
         {
             headers: header,
@@ -49,9 +51,9 @@ function refreshData(screen, context) {
                 return Object.values(row).map(function (part, index) {
                     return part.substring(0, context.columnWidth[index]);
                 });
-                return tab
             })
         })
+
     if (screen) {
         screen.render()
     }
@@ -71,20 +73,26 @@ function renderTableView(jira) {
     // Create empty component
     var grid = new contrib.grid({ rows: 12, cols: 12, screen: screen })
 
-    var box = grid.set(0, 0, 10, 12, blessed.box, styles.box({
+    context.gauge = grid.set(0, 0, 2, 12, contrib.gauge, styles.gauge({
+        parent: screen,
+        label: ' KPIs ',
+    }))
+
+    var navBox = grid.set(2, 0, 8, 12, blessed.box, styles.box({
         parent: screen,
         label: ' Issues navigation '
     }))
 
     context.table = contrib.table(styles.table({
         keys: true
-        , parent: box
+        , parent: navBox
         , interactive: true
         , left: 1
         , top: 1
         , columnSpacing: 5 //in chars
         , columnWidth: context.columnWidth
     }))
+    
     // Fetch Data
     fetchJiraTickets(jira, context.jql).then(function (dataz) {
         context.rows = formatData(dataz)
@@ -107,13 +115,9 @@ function renderTableView(jira) {
                 {
                     headers: header,
                     data: context.rows.map(row => {
-                        //return Object.values(row)
                         return Object.values(row).map(function (part, index) {
-                            //                            if(part) {
                             return part.substring(0, context.columnWidth[index]);
-                            //                          }
                         });
-                        return tab
                     })
                 })
 
@@ -234,7 +238,7 @@ function renderTableView(jira) {
 
     var help = grid.set(10, 0, 2, 12, widget.helper, styles.helper(
         {
-            parent: box,
+            parent: screen,
             shortcutByColumn: 4,
             shortcuts: shortcts
         }))

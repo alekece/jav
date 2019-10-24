@@ -11,6 +11,20 @@ function input(options) {
     return options
 }
 
+function gauge(options) {
+    options.style = {
+        bg: backgroundColor,
+        fg: foregroundColor,
+        border: {
+            type: borderType,
+            fg: foregroundColor,
+            bg: backgroundColor
+        }
+    }
+
+    return options
+}
+
 function label(options) {
     options.style = {
         fg: foregroundColor,
@@ -95,5 +109,6 @@ module.exports = {
     table: table,
     form: form,
     box: box,
-    prompt: prompt
+    prompt: prompt,
+    gauge: gauge
 }
