@@ -1,7 +1,8 @@
 const blessed = require("blessed");
 const contrib = require('blessed-contrib');
 const tickets = require('./tickets')
-const styles = require("./styles");
+const styles = require('./styles');
+const edit = require('./edit.js');
 const widget = require('./widget');
 
 exports.create = function (jira) {
@@ -204,25 +205,7 @@ exports.create = function (jira) {
 					screen = null
 					tickets.renderTableView(jira)
 				}
-			},
-            {
-                key: 'C-e', desc: 'Edit JIRA', callback: () => {
-                    var prompt = blessed.prompt({
-                        parent: screen,
-                        left: 'center',
-                        top: 'center'
-                    })
-                    prompt.readInput('Ticket Key', '', (err, value) => {
-                        if (value) {
-                            screen.destroy()
-                            screen = null
-                            edit(jira, value)
-                        } else {
-							screen.render()
-						}
-                    })
-                }
-            }
+			}
 		],
 		shortcutByColumn: 4
 	})
