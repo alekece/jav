@@ -62,6 +62,20 @@ function box(options) {
     return options
 }
 
+function prompt(options) {
+    options.styles = {
+        fg: foregroundColor,
+        bg: backgroundColor
+    }
+    options.border = {
+        type: 'line',
+        bg: backgroundColor,
+        fg: foregroundColor
+    }
+
+    return options
+}
+
 function helper(options) {
     options.style = {
         fg: foregroundColor,
@@ -80,5 +94,6 @@ module.exports = {
     label: label,
     table: table,
     form: form,
-    box: box
+    box: box,
+    prompt: prompt
 }
