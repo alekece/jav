@@ -57,7 +57,7 @@ function refreshData(screen, context) {
         var cumulPercent = cumulPercent + perc
         var stackElem = {
             percent : Math.floor(perc) ,
-            stroke :  Math.floor(256 / 100 * perc)
+            stroke :  Math.floor((256 / 100) * cumulPercent)
         }
         percent.push(stackElem)
     })
