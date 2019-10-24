@@ -7,10 +7,10 @@ const { edit } = require('./edit.js')
 const { create } = require('./create.js')
 
 // Here are common variable (They can actually be passed through function, keep them here for readability)
-const header = ['Issue', 'Type', 'Creator', 'Creation Date', 'Project','Status', 'Component', 'Summary']
+const header = ['Issue', 'Type', 'Creator', 'Creation Date', 'Project', 'Status', 'Component', 'Summary']
 const keyBindings = [['i', 'key'], ['t', 'type'], ['c', 'creator'],
 ['d', 'created'], ['p', 'project'], ['s', 'status'], ['o', 'component'], ['s', 'summary']]
-const colorValues = ['magenta', 'yellow',  'green', 'cyan', 'red', 'blue']
+const colorValues = ['magenta', 'yellow', 'green', 'cyan', 'red', 'blue']
 
 async function fetchJiraTickets(jira, jql) {
     const issues = await jira.searchJira(jql);
@@ -40,40 +40,41 @@ function formatDate(stringDate) {
     return new Date(stringDate).toLocaleDateString("en-US",
         { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' })
 }
+var colorPerStatus = {}
 
 function refreshData(screen, context) {
     var countPerStatus = {}
-    var colorPerStatus = {}
+    colorPerStatus = {}
     var total = 0;
 
     context.rows.forEach(function (row) {
         countPerStatus[row.status] = countPerStatus[row.status] ? countPerStatus[row.status] + 1 : 1
-        total ++
+        total++
     })
-    
-    var percent =[]
+
+    var percent = []
     var idxColor = 0
-    for( let [key, value] of Object.entries(countPerStatus)){
+    for (let [key, value] of Object.entries(countPerStatus)) {
         var perc = value * 100 / total;
         var stackElem = {
-            percent : Math.floor(perc) ,
-            stroke :  colorValues[idxColor % colorValues.length]
+            percent: Math.floor(perc),
+            stroke: colorValues[idxColor % colorValues.length]
         }
         percent.push(stackElem)
         colorPerStatus[key] = colorValues[idxColor % colorValues.length];
         idxColor++
     }
-    
+
     context.gauge.setStack(percent)
     context.table.setData(
         {
             headers: header,
             data: context.rows.filter((e) => context.filter(e)).map(row => {
                 return Object.values(row).map(function (part, index) {
-                    if(index == 5) {
+                    if (index == 5) {
                         var cl = colorPerStatus[part]
                         return colors[cl](part.substring(0, context.columnWidth[index]))
-                    }else {
+                    } else {
                         return part.substring(0, context.columnWidth[index]);
                     }
                 });
@@ -118,7 +119,7 @@ function renderTableView(jira) {
         , columnSpacing: 5 //in chars
         , columnWidth: context.columnWidth
     }))
-    
+
     // Fetch Data
     fetchJiraTickets(jira, context.jql).then(function (dataz) {
         context.rows = formatData(dataz)
@@ -142,7 +143,12 @@ function renderTableView(jira) {
                     headers: header,
                     data: context.rows.map(row => {
                         return Object.values(row).map(function (part, index) {
-                            return part.substring(0, context.columnWidth[index]);
+                            if (index == 5) {
+                                var cl = colorPerStatus[part]
+                                return colors[cl](part.substring(0, context.columnWidth[index]))
+                            } else {
+                                return part.substring(0, context.columnWidth[index]);
+                            }
                         });
                     })
                 })
