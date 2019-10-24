@@ -54,7 +54,7 @@ function refreshData(screen, context) {
     var cumulPercent = 0
     Object.values(countPerType).forEach(function mapApply(value, key, map) {
         var perc = value * 100 / total;
-        var cumulPercent = cumulPercent + perc
+        cumulPercent = cumulPercent + perc
         var stackElem = {
             percent : Math.floor(perc) ,
             stroke :  Math.floor((256 / 100) * cumulPercent)
