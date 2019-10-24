@@ -13,7 +13,6 @@ const keyBindings = [['i', 'key'], ['t', 'type'], ['c', 'creator'],
 ['d', 'created'], ['p', 'project'], ['s', 'status'], ['o', 'component'], ['s', 'summary']]
 
 async function fetchJiraTickets(jira, jql) {
-    console.log("Fetch ticket : " + jql)
     const issues = await jira.searchJira(jql);
     return issues;
 }
@@ -75,7 +74,7 @@ function renderTableView(jira) {
     var box = grid.set(0, 0, 10, 12, blessed.box, styles.box({
         parent: screen,
         label: ' Issues navigation '
-    })) 
+    }))
 
     context.table = contrib.table(styles.table({
         keys: true
@@ -167,8 +166,20 @@ function renderTableView(jira) {
                         fetchJiraTickets(jira, context.jql).then(function (dataz) {
                             context.rows = formatData(dataz)
                             refreshData(screen, context)
-                        })})
+                        })
+                    })
                 }
+            })
+        }
+    })
+    shortcts.push({
+        key: 'C-u',
+        desc: 'Assigned to me',
+        callback: () => {
+            context.jql = "assignee in (currentUser())"
+            fetchJiraTickets(jira, context.jql).then(function (dataz) {
+                context.rows = formatData(dataz)
+                refreshData(screen, context)
             })
         }
     })
