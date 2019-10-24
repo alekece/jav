@@ -3,8 +3,8 @@ const contrib = require('blessed-contrib')
 const colors = require('colors/safe')
 const styles = require('./styles')
 const widget = require('./widget')
-const {edit} = require('./edit.js')
-const {create} = require('./create.js')
+const { edit } = require('./edit.js')
+const { create } = require('./create.js')
 
 // Here are common variable (They can actually be passed through function, keep them here for readability)
 
@@ -45,10 +45,17 @@ function refreshData(screen, context) {
     context.table.setData(
         {
             headers: header,
-            data: context.rows.filter((v) => context.filter(v)).map(o => Object.values(o))
-
+            data: context.rows.map(row => {
+                //return Object.values(row)
+                return Object.values(row).map(function (part, index) {
+                    return part.substring(0, context.columnWidth[index]);
+                });
+                return tab
+            })
         })
-    screen.render()
+    if (screen) {
+        screen.render()
+    }
 }
 
 function renderTableView(jira) {
@@ -59,7 +66,7 @@ function renderTableView(jira) {
         table: {},
         filter: (s) => true,
         jql: "",
-        columnWidth: [10, 8, 17, 40, 20, 15, 20, 30]
+        columnWidth: [10, 8, 17, 30, 15, 20, 20, 50]
     }
 
     // Fetch Data
@@ -71,9 +78,9 @@ function renderTableView(jira) {
     // Create empty component
     var grid = new contrib.grid({ rows: 12, cols: 12, screen: screen })
 
-    var box = grid.set(2, 0, 8, 12, blessed.box, styles.box({
+    var box = grid.set(0, 0, 10, 12, blessed.box, styles.box({
         parent: screen,
-        label: ' Issues navigation'
+        label: ' Issues navigation '
     })) 
 
     context.table = contrib.table(styles.table({
@@ -103,9 +110,11 @@ function renderTableView(jira) {
                 {
                     headers: header,
                     data: context.rows.map(row => {
-                        var tab = Object.values(row);
-                        tab.forEach(function (part, index, theArray) {
-                            tab[index] = part.substring(0, part.substring(0, 4));
+                        //return Object.values(row)
+                        return Object.values(row).map(function (part, index) {
+                            //                            if(part) {
+                            return part.substring(0, context.columnWidth[index]);
+                            //                          }
                         });
                         return tab
                     })
@@ -152,9 +161,11 @@ function renderTableView(jira) {
         key: 'enter',
         desc: 'Edit selected ticket',
         callback: () => {
-            screen.destroy()
-            screen = null
-            edit(jira, context.rows[context.table.rows.selected].key)
+            if (context.rows.length > 0) {
+                screen.destroy()
+                screen = null
+                edit(jira, context.rows[context.table.rows.selected].key)
+            }
         }
     })
 

@@ -12,91 +12,95 @@ exports.create = function (jira) {
 
 	const grid = new contrib.grid({ rows: 12, cols: 12, screen: screen });
 
-	const form = grid.set(0, 0, 10, 10, blessed.form, {
+	const form = grid.set(0, 0, 10, 10, blessed.form, styles.form({
 		parent: screen,
 		keys: true,
 		left: 0,
 		top: 0,
-		label: "Create JIRA"
-	});
+		label: " Create JIRA "
+	}));
 
-	const list = grid.set(0, 10, 10, 2, blessed.list, {
+	const list = grid.set(0, 10, 10, 2, blessed.list, styles.box({
 		parent: screen,
 		left: 0,
 		top: 0,
 		border: {
 			type: 'line'
 		}
-	});
+	}));
 
-	const projectLabel = blessed.text({
+	const projectLabel = blessed.text(styles.label({
 		parent: form,
 		left: 2,
-		top: 2,
+		top: 1,
 		name: "projectLabel",
 		content: "Project:"
-	});
+	}));
 
 	const projectInput = blessed.textbox(styles.input({
 		parent: form,
 		mouse: true,
 		inputOnFocus: true,
 		left: 2,
-		top: 3,
+		top: 2,
 		height: 1,
+		width: "97%",
 		name: "projectInput"
 	}));
 
-	const typeLabel = blessed.text({
+	const typeLabel = blessed.text(styles.label({
 		parent: form,
 		left: 2,
-		top: 5,
+		top: 4,
 		name: "typeLabel",
 		content: "Type:"
-	});
+	}));
 
 	const typeInput = blessed.textbox(styles.input({
 		parent: form,
 		mouse: true,
 		inputOnFocus: true,
 		left: 2,
-		top: 6,
+		top: 5,
 		height: 1,
+		width: "97%",
 		name: "typeInput"
 	}));
 
-	const summaryLabel = blessed.text({
+	const summaryLabel = blessed.text(styles.label({
 		parent: form,
 		left: 2,
-		top: 8,
+		top: 7,
 		name: "summaryLabel",
 		content: "Summary:"
-	});
+	}));
 
 	const summaryInput = blessed.textbox(styles.input({
 		parent: form,
 		mouse: true,
 		inputOnFocus: true,
 		left: 2,
-		top: 9,
+		top: 8,
 		height: 1,
+		width: "97%",
 		name: "summaryInput"
 	}));
 
-	const descriptionLabel = blessed.text({
+	const descriptionLabel = blessed.text(styles.label({
 		parent: form,
 		left: 2,
-		top: 11,
+		top: 10,
 		name: "descriptionLabel",
 		content: "Description:"
-	});
+	}));
 
 	const descriptionInput = blessed.textarea(styles.input({
 		parent: form,
 		mouse: true,
 		keys: true,
 		left: 2,
-		top: 12,
+		top: 11,
+		width: "97%",
 		name: "descriptionInput"
 	}));
 
