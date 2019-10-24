@@ -12,8 +12,8 @@ const header = ['Issue (i)', colors.red('Type (t)'), 'Creator (c)', 'Creation Da
 const keyBindings = [['i', 'key'], ['t', 'type'], ['c', 'creator'],
 ['d', 'created'], ['p', 'project'], ['s', 'status'], ['o', 'component'], ['s', 'summary']]
 
-async function fetchJiraTickets(jira) {
-    const issues = await jira.searchJira('assignee in (currentUser())');
+async function fetchJiraTickets(jira, jql) {
+    const issues = await jira.searchJira(jql);
     return issues;
 }
 
@@ -45,15 +45,16 @@ function refreshData(screen, context) {
     context.table.setData(
         {
             headers: header,
-            data: context.rows.map(row => {
-                //return Object.values(row)
+            data: context.rows.filter((e) => context.filter(e)).map(row => {
                 return Object.values(row).map(function (part, index) {
                     return part.substring(0, context.columnWidth[index]);
                 });
                 return tab
             })
         })
-    screen.render()
+    if (screen) {
+        screen.render()
+    }
 }
 
 function renderTableView(jira) {
@@ -63,22 +64,16 @@ function renderTableView(jira) {
         topBox: false,
         table: {},
         filter: (s) => true,
-        jql: "",
+        jql: "assignee in (currentUser())",
         columnWidth: [10, 8, 17, 30, 15, 20, 20, 50]
     }
-
-    // Fetch Data
-    fetchJiraTickets(jira).then(function (dataz) {
-        context.rows = formatData(dataz)
-        refreshData(screen, context)
-    })
 
     // Create empty component
     var grid = new contrib.grid({ rows: 12, cols: 12, screen: screen })
 
-    var box = grid.set(2, 0, 8, 12, blessed.box, styles.box({
+    var box = grid.set(0, 0, 10, 12, blessed.box, styles.box({
         parent: screen,
-        label: ' Issues navigation'
+        label: ' Issues navigation '
     }))
 
     context.table = contrib.table(styles.table({
@@ -90,7 +85,11 @@ function renderTableView(jira) {
         , columnSpacing: 5 //in chars
         , columnWidth: context.columnWidth
     }))
-
+    // Fetch Data
+    fetchJiraTickets(jira, context.jql).then(function (dataz) {
+        context.rows = formatData(dataz)
+        refreshData(screen, context)
+    })
     context.table.focus()
     // allow control the table with the keyboard
     context.table.setData(
@@ -132,18 +131,57 @@ function renderTableView(jira) {
     })
     shortcts.push({
         key: '/',
-        desc: 'Search table',
+        desc: '',
         callback: () => {
-            var prompt = blessed.prompt({
+            var prompt = blessed.prompt(styles.prompt({
                 parent: screen,
                 left: 'center',
-                top: 'center'
-            })
+                top: 'center',
+                height: 10
+            }))
             prompt.readInput('Search', '', (err, value) => {
                 if (value) {
                     context.filter = (s) => JSON.stringify(s).includes(value)
                     refreshData(screen, context)
                 }
+            })
+        }
+    })
+    shortcts.push({
+        key: 'C-f',
+        desc: 'Custom JQL',
+        callback: () => {
+            var prompt = blessed.prompt(styles.prompt({
+                parent: screen,
+                left: 'center',
+                top: 'center',
+                height: 10
+            }))
+            prompt.readInput('Custom JQL ', context.jql, (err, value) => {
+                if (value) {
+                    context.jql = value.trim()
+                    fetchJiraTickets(jira, context.jql).then(function (dataz) {
+                        context.rows = formatData(dataz)
+                        refreshData(screen, context)
+                    }).catch(error => {
+                        context.jql = "assignee in (NONE)"
+                        fetchJiraTickets(jira, context.jql).then(function (dataz) {
+                            context.rows = formatData(dataz)
+                            refreshData(screen, context)
+                        })
+                    })
+                }
+            })
+        }
+    })
+    shortcts.push({
+        key: 'C-u',
+        desc: 'Assigned to me',
+        callback: () => {
+            context.jql = "assignee in (currentUser())"
+            fetchJiraTickets(jira, context.jql).then(function (dataz) {
+                context.rows = formatData(dataz)
+                refreshData(screen, context)
             })
         }
     })
@@ -159,9 +197,11 @@ function renderTableView(jira) {
         key: 'enter',
         desc: 'Edit selected ticket',
         callback: () => {
-            screen.destroy()
-            screen = null
-            edit(jira, context.rows[context.table.rows.selected].key)
+            if (context.rows.length > 0) {
+                screen.destroy()
+                screen = null
+                edit(jira, context.rows[context.table.rows.selected].key)
+            }
         }
     })
 
@@ -170,6 +210,25 @@ function renderTableView(jira) {
             screen.destroy()
             screen = null
             create(jira)
+        }
+    })
+
+    shortcts.push({
+        key: 'C-e', desc: 'Edit JIRA', callback: () => {
+            var prompt = blessed.prompt({
+                parent: screen,
+                left: 'center',
+                top: 'center'
+            })
+            prompt.readInput('Ticket Key', '', (err, value) => {
+                if (value) {
+                    screen.destroy()
+                    screen = null
+                    edit(jira, value)
+                } else {
+                    screen.render()
+                }
+            })
         }
     })
 

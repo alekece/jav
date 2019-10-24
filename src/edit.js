@@ -6,8 +6,9 @@ const { create } = require('./create.js')
 const styles = require("./styles");
 const widget = require('./widget');
 
-exports.edit = function (jira, ticketId) {
-    var screen = widget.screen()
+exports.edit = edit
+function edit (jira, ticketId) {
+    var screen = widget.screen(true)
     let projects = [];
     let statues = [];
     let issue = null;
@@ -17,84 +18,88 @@ exports.edit = function (jira, ticketId) {
 
     const grid = new contrib.grid({ rows: 12, cols: 12, screen: screen });
 
-    const form = grid.set(0, 0, 10, 10, blessed.form, {
+    const form = grid.set(0, 0, 10, 10, blessed.form, styles.form({
         parent: screen,
         keys: true,
         left: 0,
         top: 0,
-        label: `Edit JIRA: ${ticketId}`
-    });
+        label: ` Edit JIRA: ${ticketId} `
+    }));
 
-    const list = grid.set(0, 10, 10, 2, blessed.list, {
+    const list = grid.set(0, 10, 10, 2, blessed.list, styles.box({
         parent: screen,
         left: 0,
-        top: 0,
+        top: 1,
+        label: ' Suggestion ',
         border: {
             type: 'line'
         }
-    });
+    }));
 
-    const projectLabel = blessed.text({
+    const projectLabel = blessed.text(styles.label({
         parent: form,
         left: 2,
-        top: 2,
+        top: 1,
         name: "projectLabel",
         content: "Project:"
-    });
+    }));
 
     const projectInput = blessed.textbox(styles.input({
         parent: form,
         mouse: true,
         inputOnFocus: true,
         left: 2,
-        top: 3,
+        top: 2,
         height: 1,
+        width: "97%",
         name: "projectInput"
     }));
 
-    const typeLabel = blessed.text({
+    const typeLabel = blessed.text(styles.label({
         parent: form,
         left: 2,
-        top: 5,
+        top: 4,
         name: "typeLabel",
         content: "Type:"
-    });
+    }));
 
     const typeInput = blessed.textbox(styles.input({
         parent: form,
         mouse: true,
         inputOnFocus: true,
         left: 2,
-        top: 6,
+        top: 5,
         height: 1,
+        width: "97%",
         name: "typeInput"
     }));
 
-    const summaryLabel = blessed.text({
+    const summaryLabel = blessed.text(styles.label({
         parent: form,
         left: 2,
-        top: 8,
+        top: 7,
         name: "summaryLabel",
         content: "Summary:"
-    });
+    }));
 
     const summaryInput = blessed.textbox(styles.input({
         parent: form,
         mouse: true,
         inputOnFocus: true,
         left: 2,
-        top: 9,
+        top: 8,
         height: 1,
+        width: "97%",
         name: "summaryInput"
     }));
 
-    const assigneeLabel = blessed.text({
+    const assigneeLabel = blessed.text(styles.label({
 	parent: form,
 	left: 2,
 	top: 11,
 	name: "assigneeLabel",
 	content: "Assignee:"
-    });
+    }));
     
     const assigneeInput = blessed.textbox(styles.input({
 	parent: form,
@@ -106,13 +111,13 @@ exports.edit = function (jira, ticketId) {
 	name: "assigneeInput"
     }));
 
-    const statusLabel = blessed.text({
+    const statusLabel = blessed.text(styles.label({
 	parent: form,
 	left: 2,
 	top: 14,
 	name: "statusLabel",
 	content: "Status:"
-    });
+    }));
     
     const statusInput = blessed.textbox(styles.input({
 	parent: form,
@@ -124,13 +129,13 @@ exports.edit = function (jira, ticketId) {
 	name: "statusInput"
     }));
     
-    const descriptionLabel = blessed.text({
+    const descriptionLabel = blessed.text(styles.label({
 	parent: form,
 	left: 2,
 	top: 17,
 	name: "descriptionLabel",
 	content: "Description:"
-    });
+    }));
 
     const descriptionInput = blessed.textarea(styles.input({
 	parent: form,
@@ -272,6 +277,24 @@ exports.edit = function (jira, ticketId) {
                     screen.destroy()
                     create(jira)
                 }
+            },
+            {
+                key: 'C-e', desc: 'Edit JIRA', callback: () => {
+                    var prompt = blessed.prompt({
+                        parent: screen,
+                        left: 'center',
+                        top: 'center'
+                    })
+                    prompt.readInput('Ticket Key', '', (err, value) => {
+                        if (value) {
+                            screen.destroy()
+                            screen = null
+                            edit(jira, value)
+                        } else {
+                            screen.render()
+                        }
+                    })
+                }
             }
         ],
         shortcutByColumn: 4
@@ -279,10 +302,13 @@ exports.edit = function (jira, ticketId) {
 
     helper.applyKeysTo(form);
 
+
     (async () => {
+        screen.render()
         projects = await jira.listProjects();
 	statues = await jira.listStatus();
         issue = await jira.getIssue(ticketId);
+        screen.loaded();
         projectInput.setValue(issue.fields.project.key);
         projectId = issue.fields.project.id;
         typeInput.setValue(issue.fields.issuetype.name);
