@@ -134,13 +134,14 @@ function renderTableView(jira) {
     })
     shortcts.push({
         key: '/',
-        desc: 'Search table',
+        desc: '',
         callback: () => {
-            var prompt = blessed.prompt({
+            var prompt = blessed.prompt(styles.prompt({
                 parent: screen,
                 left: 'center',
-                top: 'center'
-            })
+                top: 'center',
+                height: 10
+            }))
             prompt.readInput('Search', '', (err, value) => {
                 if (value) {
                     context.filter = (s) => JSON.stringify(s).includes(value)
