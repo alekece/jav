@@ -7,7 +7,7 @@ const styles = require("./styles");
 const widget = require('./widget');
 
 exports.edit = edit
-function edit (jira, ticketId) {
+function edit(jira, ticketId) {
     var screen = widget.screen(true)
     let projects = [];
     let statues = [];
@@ -94,57 +94,57 @@ function edit (jira, ticketId) {
     }));
 
     const assigneeLabel = blessed.text(styles.label({
-	parent: form,
-	left: 2,
-	top: 11,
-	name: "assigneeLabel",
-	content: "Assignee:"
+        parent: form,
+        left: 2,
+        top: 11,
+        name: "assigneeLabel",
+        content: "Assignee:"
     }));
-    
+
     const assigneeInput = blessed.textbox(styles.input({
-	parent: form,
-	mouse: true,
-	inputOnFocus: true,
-	left: 2,
-	top: 12,
-	height: 1,
-	name: "assigneeInput"
+        parent: form,
+        mouse: true,
+        inputOnFocus: true,
+        left: 2,
+        top: 12,
+        height: 1,
+        name: "assigneeInput"
     }));
 
     const statusLabel = blessed.text(styles.label({
-	parent: form,
-	left: 2,
-	top: 14,
-	name: "statusLabel",
-	content: "Status:"
+        parent: form,
+        left: 2,
+        top: 14,
+        name: "statusLabel",
+        content: "Status:"
     }));
-    
+
     const statusInput = blessed.textbox(styles.input({
-	parent: form,
-	mouse: true,
-	inputOnFocus: true,
-	left: 2,
-	top: 15,
-	height: 1,
-	name: "statusInput"
+        parent: form,
+        mouse: true,
+        inputOnFocus: true,
+        left: 2,
+        top: 15,
+        height: 1,
+        name: "statusInput"
     }));
-    
+
     const descriptionLabel = blessed.text(styles.label({
-	parent: form,
-	left: 2,
-	top: 17,
-	name: "descriptionLabel",
-	content: "Description:"
+        parent: form,
+        left: 2,
+        top: 17,
+        name: "descriptionLabel",
+        content: "Description:"
     }));
 
     const descriptionInput = blessed.textarea(styles.input({
-	parent: form,
-	mouse: true,
-	keys: true,
-	left: 2,
-	top: 18,
-	bottom: 5,
-	name: "descriptionInput"
+        parent: form,
+        mouse: true,
+        keys: true,
+        left: 2,
+        top: 18,
+        bottom: 5,
+        name: "descriptionInput"
     }));
 
     projectInput.on("focus", () => {
@@ -216,7 +216,7 @@ function edit (jira, ticketId) {
 
         screen.render();
     });
-    
+
     summaryInput.on("focus", () => {
         list.setItems([]);
         screen.render();
@@ -239,23 +239,23 @@ function edit (jira, ticketId) {
                     issuetype: {
                         id: issueTypeId
                     },
-		    status: {
-			id: statusId
-		    }
+                    status: {
+                        id: statusId
+                    }
                 }
             });
 
             screen.render();
         }
-	if (assigneeInput.getValue()) {
-	    try {
-		const issue = await jira.updateAssignee(ticketId, assigneeInput.getValue());
+        if (assigneeInput.getValue()) {
+            try {
+                const issue = await jira.updateAssignee(ticketId, assigneeInput.getValue());
 
-		screen.render();
-	    }
-	    catch (err) {
-		assigneeInput.clearValue();
-	    }
+                screen.render();
+            }
+            catch (err) {
+                assigneeInput.clearValue();
+            }
         }
     });
 
@@ -307,20 +307,20 @@ function edit (jira, ticketId) {
     (async () => {
         screen.render()
         projects = await jira.listProjects();
-	statues = await jira.listStatus();
+        statues = await jira.listStatus();
         issue = await jira.getIssue(ticketId);
         screen.loaded();
         projectInput.setValue(issue.fields.project.key);
         projectId = issue.fields.project.id;
         typeInput.setValue(issue.fields.issuetype.name);
         issueTypeId = issue.fields.issuetype.id;
-	assigneeInput.setValue(issue.fields.assignee.name);
-	statusInput.setValue(issue.fields.status.name);
-	statusId = issue.fields.status.id;
+        assigneeInput.setValue(issue.fields.assignee.name);
+        statusInput.setValue(issue.fields.status.name);
+        statusId = issue.fields.status.id;
         summaryInput.setValue(issue.fields.summary);
         descriptionInput.setValue(issue.fields.description);
         screen.render();
         form.focus();
-    })();    
+    })();
 };
 

@@ -122,21 +122,34 @@ function login() {
 
     helper.applyKeysTo(form)
 
-    form.on('submit', data => {
-        var jira = new JiraApi({
-            protocol: 'https',
-            host: data.jiraUrl,
-            username: data.email,
-            password: data.token,
-            apiVersion: '2',
-            strictSSL: true
-        });
-        if(data.rememberMe){
-            fs.writeFileSync('./.login', data.email + '\n' + data.token + '\n' + data.jiraUrl)
+    form.on('submit',async data => {
+        try {
+            var jira = new JiraApi({
+                protocol: 'https',
+                host: data.jiraUrl,
+                username: data.email,
+                password: data.token,
+                apiVersion: '2',
+                strictSSL: true
+            });
+            await jira.getServerInfo()
+            if (jira && data.rememberMe) {
+                fs.writeFileSync('./.login', data.email + '\n' + data.token + '\n' + data.jiraUrl)
+            }
+            if (jira) {
+                screen.destroy()
+                screen = null
+                tickets.renderTableView(jira)
+            }
         }
-        screen.destroy()
-        screen = null
-        tickets.renderTableView(jira)
+        catch (err) {
+            var msg = blessed.message(styles.prompt({
+                parent: screen,
+                left: 'center',
+                top: 'center'
+            }))
+            msg.error('Login failed, please retry')
+        }
     })
 
     screen.render()
